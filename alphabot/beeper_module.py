@@ -1,10 +1,13 @@
 import threading
+#from alphabot.gpio_module import GpioWrapper
 from gpio_module import GpioWrapper
 
 
 class Beeper:
 
-    def __init__(self, soundPin=4, gpio=GpioWrapper()):
+    def __init__(self, gpio=None, soundPin=4):
+        if gpio is None:
+            gpio = GpioWrapper()
         self._soundPin = soundPin
         self.gpio = gpio
         self.gpio.setup(self._soundPin, gpio.OUT)
