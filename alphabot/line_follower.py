@@ -1,5 +1,4 @@
 import time
-#from alphabot.beeper_module import Beeper
 from beeper_module import Beeper
 
 class Bot:

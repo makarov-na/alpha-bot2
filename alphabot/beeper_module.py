@@ -1,5 +1,4 @@
 import threading
-#from alphabot.gpio_module import GpioWrapper
 from gpio_module import GpioWrapper
 
 
