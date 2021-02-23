@@ -3,6 +3,7 @@ try:
 except ImportError:
     pass
 
+
 class GpioWrapper:
 
     def __init__(self):
@@ -20,3 +21,6 @@ class GpioWrapper:
         self
         GPIO.output(pin, value)
 
+    def createPwm(self, pin, frequency):
+        self
+        return GPIO.PWM(pin, frequency)

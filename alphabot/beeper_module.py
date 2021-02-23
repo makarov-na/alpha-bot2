@@ -20,3 +20,6 @@ class Beeper:
 
     def beepOff(self):
         self.gpio.output(self._soundPin, self.gpio.LOW)
+
+    def beepOn200mls(self):
+        self.beepOn(0.2)
