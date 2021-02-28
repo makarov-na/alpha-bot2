@@ -1,6 +1,8 @@
+import logging
 try:
     import RPi.GPIO as GPIO
 except ImportError:
+    logging.exception("Can't import GPIO")
     pass
 
 
