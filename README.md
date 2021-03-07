@@ -2,8 +2,8 @@
 
 Friendly API implementation for AlphaBot2-Pi KIT  
 
-* Motors control
-* Line sensors analog to digital converter control
+* Motors power control with frequency width modulation
+* Line sensors analog to digital converter TLC1543 control
+* Led strip WS2812B control
 * Beeper control
-* Led strip control
 * GPIO wrapper for PC environment development and unit testing
