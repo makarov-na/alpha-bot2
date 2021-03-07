@@ -3,11 +3,15 @@ from beeper_module import Beeper
 from gpio_module import GpioWrapper
 from motor_module import LeftMotor, RightMotor
 from ledstrip_module import LedStrip
+from line_sensor_module import LineSensorsAdc
 
-leftMotor = LeftMotor(GpioWrapper())
-rightMotor = RightMotor(GpioWrapper())
-beeper = Beeper(GpioWrapper())
+gpio = GpioWrapper()
+
+leftMotor = LeftMotor(gpio)
+rightMotor = RightMotor(gpio)
+beeper = Beeper(gpio)
 strip = LedStrip()
+sensors_adc = LineSensorsAdc(gpio)
 
 strip.setPixelColourRgb(0, 255, 0, 0)
 strip.setPixelColourRgb(1, 0, 255, 0)
@@ -19,9 +23,5 @@ time.sleep(5)
 
 n = 0
 while True:
-    strip.setPixelColourRgb(n, 255, 0, 0)
-    time.sleep(1)
-    strip.switchOffPixel(n)
-    n += 1
-    if n > 3:
-        n = 0
+    print(sensors_adc.readSensors())
+    time.sleep(0.1)
