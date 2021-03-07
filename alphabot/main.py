@@ -17,9 +17,6 @@ strip.setPixelColourRgb(0, 255, 0, 0)
 strip.setPixelColourRgb(1, 0, 255, 0)
 strip.setPixelColourRgb(2, 0, 0, 255)
 strip.setPixelColourRgb(3, 255, 0, 255)
-time.sleep(5)
-strip.switchOffStrip()
-time.sleep(5)
 
 n = 0
 while True:
