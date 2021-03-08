@@ -1,9 +1,9 @@
 import time
-from beeper_module import Beeper
-from gpio_module import GpioWrapper
-from motor_module import LeftMotor, RightMotor
-from ledstrip_module import LedStrip
-from line_sensor_module import LineSensorsAdc
+from alphabot.hardware.beeper_module import Beeper
+from alphabot.hardware.gpio_module import GpioWrapper
+from alphabot.hardware.motor_module import LeftMotor, RightMotor
+from alphabot.hardware.ledstrip_module import LedStrip
+from alphabot.hardware.line_sensor_module import LineSensorsAdc
 
 gpio = GpioWrapper()
 

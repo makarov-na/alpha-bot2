@@ -1,4 +1,4 @@
-from gpio_module import GpioWrapper
+from alphabot.hardware.gpio_module import GpioWrapper
 
 
 class Motor:

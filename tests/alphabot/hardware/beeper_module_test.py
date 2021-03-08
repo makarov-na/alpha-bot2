@@ -1,6 +1,6 @@
 import unittest
-from alphabot.beeper_module import Beeper
-from tests.gpio_mock_module import GpioWrapperMock
+from alphabot.hardware.beeper_module import Beeper
+from tests.alphabot.hardware.gpio_mock_module import GpioWrapperMock
 from unittest.mock import MagicMock
 from unittest.mock import call
 
