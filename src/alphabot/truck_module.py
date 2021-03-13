@@ -13,42 +13,50 @@ class Truck:
         if abs(speed_power) > Motor.MAX_VALUE:
             raise Exception("Power value must be between {} to {}".format(-Motor.MAX_VALUE, Motor.MAX_VALUE))
         self._speed_power = speed_power
-        self.applyModel()
+        self._sendOutputToMotors()
 
     def setTurnPower(self, turn_power):
         if abs(turn_power) > Motor.MAX_VALUE:
             raise Exception("Power value must be between {} to {}".format(-Motor.MAX_VALUE, Motor.MAX_VALUE))
         self._rotation_power = turn_power
-        self.applyModel()
+        self._sendOutputToMotors()
 
-    def applyModel(self):
+    def stop(self):
+        self._rotation_power = 0
+        self._speed_power = 0
+        self._sendOutputToMotors()
 
-        if self._speed_power > 0:
-            left_motor_power = self._speed_power
-            right_motor_power = self._speed_power
-            if self._rotation_power != 0:
-                left_motor_power = self._speed_power + abs(self._rotation_power)
-                if left_motor_power > Motor.MAX_VALUE:
-                    right_motor_power = self._speed_power - (left_motor_power - Motor.MAX_VALUE)
-                    left_motor_power = Motor.MAX_VALUE
-                if right_motor_power < Motor.MIN_VALUE:
-                    right_motor_power = Motor.MIN_VALUE
-            if self._rotation_power < 0:
-                left_motor_power_tmp = left_motor_power
-                left_motor_power = right_motor_power
-                right_motor_power = left_motor_power_tmp
+    def _sendOutputToMotors(self):
 
+        if self._speed_power == 0 and self._rotation_power == 0:
+            self._left_motor.stop()
+            self._right_motor.stop()
+            return
+
+        motor_one_power = abs(self._speed_power)
+        motor_two_power = abs(self._speed_power)
+
+        if self._rotation_power != 0:
+            motor_one_power = abs(self._speed_power) + abs(self._rotation_power)
+            if motor_one_power > Motor.MAX_VALUE:
+                motor_two_power = abs(self._speed_power) - (motor_one_power - Motor.MAX_VALUE)
+                motor_one_power = Motor.MAX_VALUE
+            if motor_two_power < Motor.MIN_VALUE:
+                motor_two_power = Motor.MIN_VALUE
+
+        left_motor_power = motor_one_power
+        right_motor_power = motor_two_power
+
+        if self._rotation_power < 0:
+            left_motor_power = motor_two_power
+            right_motor_power = motor_one_power
+
+        if self._speed_power >= 0:
             self._left_motor.forward(left_motor_power)
             self._right_motor.forward(right_motor_power)
             return
+
         if self._speed_power < 0:
-            left_motor_power = -self._speed_power
-            right_motor_power = -self._speed_power
             self._left_motor.backward(left_motor_power)
             self._right_motor.backward(right_motor_power)
             return
-        self._left_motor.stop()
-        self._right_motor.stop()
-
-    def stop(self):
-        pass
