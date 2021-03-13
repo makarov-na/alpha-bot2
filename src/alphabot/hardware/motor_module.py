@@ -4,6 +4,8 @@ from alphabot.hardware.gpio_module import GpioWrapper
 class Motor:
     _PWM_FREQUENCY = 500
     _INITIAL_POWER_PERCENT = 0
+    MAX_VALUE = 100
+    MIN_VALUE = 0
 
     def __init__(self, gpio: GpioWrapper, forwardDirectionPin: int, backwardDirectionPin: int, powerPin: int):
         self._gpio = gpio
@@ -23,17 +25,23 @@ class Motor:
         self._gpio.output(self._forwardDirectionPin, self._gpio.LOW)
         self._gpio.output(self._backwardDirectionPin, self._gpio.LOW)
 
-    def forward(self):
-        self._pwm.ChangeDutyCycle(self._dutyCycle)
+    def forward(self, percents=None):
+        if percents is None:
+            percents = self._dutyCycle
+        self._setPower(percents)
         self._gpio.output(self._forwardDirectionPin, self._gpio.LOW)
         self._gpio.output(self._backwardDirectionPin, self._gpio.HIGH)
 
-    def backward(self):
-        self._pwm.ChangeDutyCycle(self._dutyCycle)
+    def backward(self, percents=None):
+        if percents is None:
+            percents = self._dutyCycle
+        self._setPower(percents)
         self._gpio.output(self._forwardDirectionPin, self._gpio.HIGH)
         self._gpio.output(self._backwardDirectionPin, self._gpio.LOW)
 
-    def setPower(self, percents):
+    def _setPower(self, percents):
+        if percents < 0 or percents > Motor.MAX_VALUE:
+            raise Exception("Power value must be from 0 to " + Motor.MAX_VALUE)
         self._dutyCycle = percents
         self._pwm.ChangeDutyCycle(self._dutyCycle)
 
