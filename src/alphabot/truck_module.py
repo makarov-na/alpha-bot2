@@ -1,4 +1,5 @@
 from alphabot.hardware.motor_module import Motor
+import logging
 
 
 class Truck:
@@ -33,9 +34,26 @@ class Truck:
             self._right_motor.stop()
             return
 
+        left_motor_power, right_motor_power = self._calculateMotorsPower()
+
+        if self._rotation_power < 0:
+            left_motor_power, right_motor_power = self._swapValues(left_motor_power, right_motor_power)
+
+        if self._speed_power >= 0:
+            logging.info("left motor = {} right motor = {}".format(left_motor_power, right_motor_power))
+            self._left_motor.forward(left_motor_power)
+            self._right_motor.forward(right_motor_power)
+            return
+
+        if self._speed_power < 0:
+            logging.info("left motor = {} right motor = {}".format(left_motor_power, right_motor_power))
+            self._left_motor.backward(left_motor_power)
+            self._right_motor.backward(right_motor_power)
+            return
+
+    def _calculateMotorsPower(self):
         motor_one_power = abs(self._speed_power)
         motor_two_power = abs(self._speed_power)
-
         if self._rotation_power != 0:
             motor_one_power = abs(self._speed_power) + abs(self._rotation_power)
             if motor_one_power > Motor.MAX_VALUE:
@@ -43,20 +61,7 @@ class Truck:
                 motor_one_power = Motor.MAX_VALUE
             if motor_two_power < Motor.MIN_VALUE:
                 motor_two_power = Motor.MIN_VALUE
+        return motor_one_power, motor_two_power
 
-        left_motor_power = motor_one_power
-        right_motor_power = motor_two_power
-
-        if self._rotation_power < 0:
-            left_motor_power = motor_two_power
-            right_motor_power = motor_one_power
-
-        if self._speed_power >= 0:
-            self._left_motor.forward(left_motor_power)
-            self._right_motor.forward(right_motor_power)
-            return
-
-        if self._speed_power < 0:
-            self._left_motor.backward(left_motor_power)
-            self._right_motor.backward(right_motor_power)
-            return
+    def _swapValues(self, left_motor_power, right_motor_power):
+        return right_motor_power, left_motor_power

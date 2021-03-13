@@ -1,5 +1,8 @@
 from alphabot.hardware.gpio_module import GpioWrapper
 from alphabot.hardware.motor_module import LeftMotor, RightMotor
+from alphabot.truck_module import Truck
+import time
+import logging
 
 
 class Joystick:
@@ -30,8 +33,7 @@ class PidController:
         return 0
 
 
-
-
+logging.basicConfig(level=logging.INFO)
 joystick = Joystick()
 joystick.waitForCentralKeyPressed()
 
@@ -47,9 +49,23 @@ gpio = GpioWrapper()
 leftMotor = LeftMotor(gpio)
 rightMotor = RightMotor(gpio)
 
-bot_truck = BotTruck(leftMotor, rightMotor)
+bot_truck = Truck(leftMotor, rightMotor)
 
 speed_power = 10
-bot_truck.setSpeedPower(speed_power)  # -100 0 100
-bot_truck.setTurnPower(output)  # -200 0 200
-bot_truck.stop()  # power = 0
+'''
+for speed_power in range(-100, 100, 10):
+    bot_truck.setSpeedPower(speed_power)
+    time.sleep(2)
+'''
+
+bot_truck.setSpeedPower(20)
+time.sleep(5)
+bot_truck.stop()
+
+for turn_power in range(0, 10):
+    bot_truck.setTurnPower(10)
+    time.sleep(1)
+    bot_truck.setTurnPower(-10)
+    time.sleep(1)
+
+bot_truck.stop()
