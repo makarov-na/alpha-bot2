@@ -41,7 +41,7 @@ class Motor:
 
     def _setPower(self, percents):
         if percents < 0 or percents > Motor.MAX_VALUE:
-            raise Exception("Power value must be from 0 to " + Motor.MAX_VALUE)
+            raise Exception("Power value must be from {} to {}".format(Motor.MIN_VALUE, Motor.MAX_VALUE))
         self._dutyCycle = percents
         self._pwm.ChangeDutyCycle(self._dutyCycle)
 

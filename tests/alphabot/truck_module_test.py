@@ -146,6 +146,18 @@ class TestTruck(unittest.TestCase):
         left_motor_mock.stop.assert_called()
         right_motor_mock.stop.assert_called()
 
+    def test_speed_power_more_than_max_set(self):
+        # GIVEN
+        left_motor_mock = self.create_mock_motor()
+        right_motor_mock = self.create_mock_motor()
+        truck = Truck(left_motor_mock, right_motor_mock)
+        power_value = 101
+
+        # WHEN
+        # THEN
+        self.assertRaises(Exception, truck.setSpeedPower, power_value)
+        self.assertRaises(Exception, truck.setSpeedPower, -power_value)
+
     def create_mock_motor(self):
         motor_mock = MagicMock()
         motor_mock.forward = MagicMock()
