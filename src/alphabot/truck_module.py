@@ -30,16 +30,29 @@ class Truck:
     def _sendOutputToMotors(self):
 
         if self._speed_power == 0 and self._rotation_power == 0:
+            logging.info("left motor = {} right motor = {}".format(0, 0))
             self._left_motor.stop()
             self._right_motor.stop()
             return
 
         left_motor_power, right_motor_power = self._calculateMotorsPower()
 
+        if self._speed_power == 0 and self._rotation_power > 0:
+            logging.info("left motor = {} right motor = {}".format(left_motor_power, right_motor_power))
+            self._left_motor.forward(left_motor_power)
+            self._right_motor.backward(right_motor_power)
+            return
+
+        if self._speed_power == 0 and self._rotation_power < 0:
+            logging.info("left motor = {} right motor = {}".format(left_motor_power, right_motor_power))
+            self._left_motor.backward(left_motor_power)
+            self._right_motor.forward(right_motor_power)
+            return
+
         if self._rotation_power < 0:
             left_motor_power, right_motor_power = self._swapValues(left_motor_power, right_motor_power)
 
-        if self._speed_power >= 0:
+        if self._speed_power > 0:
             logging.info("left motor = {} right motor = {}".format(left_motor_power, right_motor_power))
             self._left_motor.forward(left_motor_power)
             self._right_motor.forward(right_motor_power)
@@ -54,6 +67,10 @@ class Truck:
     def _calculateMotorsPower(self):
         motor_one_power = abs(self._speed_power)
         motor_two_power = abs(self._speed_power)
+        if self._speed_power == 0:
+            motor_one_power = abs(self._rotation_power) / 2
+            motor_two_power = motor_one_power
+            return motor_one_power, motor_two_power
         if self._rotation_power != 0:
             motor_one_power = abs(self._speed_power) + abs(self._rotation_power)
             if motor_one_power > Motor.MAX_VALUE:

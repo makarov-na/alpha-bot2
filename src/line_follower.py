@@ -58,14 +58,14 @@ for speed_power in range(-100, 100, 10):
     time.sleep(2)
 '''
 
-bot_truck.setSpeedPower(20)
-time.sleep(5)
-bot_truck.stop()
-
-for turn_power in range(0, 10):
-    bot_truck.setTurnPower(10)
-    time.sleep(1)
-    bot_truck.setTurnPower(-10)
+for i in range(1, 10):
+    bot_truck.setTurnPower(30)
+    time.sleep(0.87)
+    bot_truck.stop()
     time.sleep(1)
 
-bot_truck.stop()
+    bot_truck.setSpeedPower(70)
+    time.sleep(1)
+    bot_truck.stop()
+    time.sleep(2)
+

@@ -1,9 +1,7 @@
 import unittest
-from alphabot.hardware.beeper_module import Beeper
-from alphabot.hardware.motor_module import Motor
-from alphabot.truck_module import Truck
 from unittest.mock import MagicMock
-from unittest.mock import call
+
+from alphabot.truck_module import Truck
 
 
 class TestTruck(unittest.TestCase):
@@ -131,8 +129,24 @@ class TestTruck(unittest.TestCase):
         truck.setTurnPower(20)
 
         # THEN
-        left_motor_mock.forward.assert_called_with(20)
-        right_motor_mock.forward.assert_called_with(0)
+        left_motor_mock.forward.assert_called_with(10)
+        right_motor_mock.backward.assert_called_with(10)
+
+    def test_speed_power_zero_with_turn_power_negative_small(self):
+        # GIVEN
+        left_motor_mock = self.create_mock_motor()
+        right_motor_mock = self.create_mock_motor()
+        truck = Truck(left_motor_mock, right_motor_mock)
+        power_value = 0
+        truck.setSpeedPower(power_value)
+
+        # WHEN
+
+        truck.setTurnPower(-20)
+
+        # THEN
+        left_motor_mock.backward.assert_called_with(10)
+        right_motor_mock.forward.assert_called_with(10)
 
     def test_speed_power_negative_set(self):
         # GIVEN
@@ -225,6 +239,7 @@ class TestTruck(unittest.TestCase):
         motor_mock.backward = MagicMock()
         motor_mock.stop = MagicMock()
         return motor_mock
+
 
 if __name__ == '__main__':
     unittest.main()
