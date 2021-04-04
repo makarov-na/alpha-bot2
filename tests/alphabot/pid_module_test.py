@@ -14,6 +14,7 @@ class TestPid(unittest.TestCase):
         pid = self._create_pid()
         pid._target_value = target_value
 
+
         # WHEN
         error = pid._calculateError(current_value)
 
@@ -23,6 +24,7 @@ class TestPid(unittest.TestCase):
     def test_calculate_proportional(self):
         # GIVEN
         pid = self._create_pid()
+        pid._kp = 2
         error = 10
 
         # WHEN
@@ -34,6 +36,7 @@ class TestPid(unittest.TestCase):
     def test_calculate_integral(self):
         # GIVEN
         pid = self._create_pid()
+        pid._ki = 2
         error = 10
         delta_time_ms = 1
 
@@ -41,11 +44,12 @@ class TestPid(unittest.TestCase):
         out = pid._calculateIntegralOutput(error, delta_time_ms)
 
         # THEN
-        self.assertEqual(pid._kp * error, out)
+        self.assertEqual(pid._ki * error, out)
 
     def test_calculate_integral_accumulation(self):
         # GIVEN
         pid = self._create_pid()
+        pid._ki = 2
         error = 10
         delta_time_ms = 1
         iteration_count = 4
@@ -55,11 +59,12 @@ class TestPid(unittest.TestCase):
             out = pid._calculateIntegralOutput(error, delta_time_ms)
 
         # THEN
-        self.assertEqual(iteration_count * error, out)
+        self.assertEqual(iteration_count * error * pid._ki, out)
 
     def test_calculate_integral_anti_windup(self):
         # GIVEN
         pid = self._create_pid()
+        pid._ki = 2
         error = 10
         delta_time_ms = 1
         iteration_count = 100
@@ -70,6 +75,20 @@ class TestPid(unittest.TestCase):
 
         # THEN
         self.assertEqual(pid._max_integral_out, out)
+
+    def test_calculate_differential(self):
+        # GIVEN
+        pid = self._create_pid()
+        pid._kd = 2
+        error = 10
+        delta_time_ms = 1
+
+        # WHEN
+        pid._calculateDifferentialOutput(10, delta_time_ms)
+        out = pid._calculateDifferentialOutput(0, delta_time_ms)
+
+        # THEN
+        self.assertEqual(-pid._kd * error, out)
 
     def test_speed_power_positive_set(self):
         # GIVEN

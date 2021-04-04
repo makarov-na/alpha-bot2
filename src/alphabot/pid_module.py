@@ -28,7 +28,7 @@ class PidController(object):
 
         out = proportional_out + integral_out + differential_out
         if abs(out) > self._max_out:
-            out = out * (self._max_out/abs(out))
+            out = out * (self._max_out / abs(out))
         return out
 
     def _calculateDeltaTimeInMs(self):
@@ -54,6 +54,6 @@ class PidController(object):
         if self._prevent_error is None:
             self._prevent_error = error
             return 0
-        differential_value = (self._prevent_error - error) / delta_time
+        differential_value = (error - self._prevent_error) / delta_time
         self._prevent_error = error
         return self._kd * differential_value
