@@ -1,8 +1,10 @@
 import unittest
+import logging
 from unittest.mock import MagicMock
 
 from alphabot.truck_module import Truck
 
+logging.basicConfig(level=logging.INFO)
 
 class TestTruck(unittest.TestCase):
 
@@ -147,6 +149,22 @@ class TestTruck(unittest.TestCase):
         # THEN
         left_motor_mock.backward.assert_called_with(10)
         right_motor_mock.forward.assert_called_with(10)
+
+    def test_speed_power_zero_with_turn_power_negative_big(self):
+        # GIVEN
+        left_motor_mock = self.create_mock_motor()
+        right_motor_mock = self.create_mock_motor()
+        truck = Truck(left_motor_mock, right_motor_mock)
+        power_value = 0
+        truck.setSpeedPower(power_value)
+
+        # WHEN
+
+        truck.setTurnPower(-100)
+
+        # THEN
+        left_motor_mock.backward.assert_called_with(50)
+        right_motor_mock.forward.assert_called_with(50)
 
     def test_speed_power_negative_set(self):
         # GIVEN
