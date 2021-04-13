@@ -14,7 +14,6 @@ class TestPid(unittest.TestCase):
         pid = self._create_pid()
         pid._target_value = target_value
 
-
         # WHEN
         error = pid._calculateError(current_value)
 
@@ -113,6 +112,66 @@ class TestPid(unittest.TestCase):
         max_out = 100
         pid = PidController(kp, ki, kd, target_value, max_out)
         return pid
+
+    def test_with_real_sensor_target_value(self):
+
+        # Делаем для левого датчика целевое значение 350 при этом воздействие только вправо в обратную сторону игнорируем.
+        # При 350 значение выходного воздействия должно быть 0, при 700 - 100%
+        # GIVEN
+
+        target_value = 350
+        pid = self._create_pid()
+        pid._target_value = target_value
+        current_value = 350
+
+        # WHEN
+        output = pid.getOutput(0)
+        time.sleep(0.02)
+        output = pid.getOutput(current_value)
+
+        # THEN
+        self.assertIsNotNone(output)
+        self.assertEqual(0, output)
+
+    def test_with_real_sensor_target_value_max(self):
+
+        # Делаем для левого датчика целевое значение 350 при этом воздействие только вправо в обратную сторону игнорируем.
+        # При 350 значение выходного воздействия должно быть 0, при 700 - 100%
+        # GIVEN
+
+        target_value = 350
+        pid = self._create_pid()
+        pid._target_value = target_value
+        current_value = 700
+
+        # WHEN
+        output = pid.getOutput(0)
+        time.sleep(0.02)
+        output = pid.getOutput(current_value)
+
+        # THEN
+        self.assertIsNotNone(output)
+        self.assertEqual(-100, output)
+
+    def test_with_real_sensor_target_value_middle(self):
+
+        # Делаем для левого датчика целевое значение 350 при этом воздействие только вправо в обратную сторону игнорируем.
+        # При 350 значение выходного воздействия должно быть 0, при 700 - 100%
+        # GIVEN
+        target_value = 350
+        pid = self._create_pid()
+        pid._target_value = target_value
+        pid._kp = 0.285
+        current_value = (700 - 350) / 2 + 350
+
+        # WHEN
+        output = pid.getOutput(0)
+        time.sleep(0.02)
+        output = pid.getOutput(current_value)
+
+        # THEN
+        self.assertIsNotNone(output)
+        self.assertEqual(-50, round(output))
 
 
 if __name__ == '__main__':
