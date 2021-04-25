@@ -7,123 +7,60 @@ import time
 import logging
 
 
-class Joystick:
-    def __init__(self) -> None:
-        super().__init__()
+class LineFollower:
 
-    def waitForCentralKeyPressed(self):
-        pass
+    def __init__(self):
+        # KP = 0.285
+        KP = 0.1
+        KD = 0.1
+        KI = 0
+        TARGET_VALUE_LEFT = 350
+        TARGET_VALUE_RIGHT = 300
+        MAX_OUT = 100
+        SPEED_POWER = 20
+        SLEEP_TIME = 0.01
 
+        self._logger = logging.getLogger(__name__)
+        self._speed_power = SPEED_POWER
+        self._sleep_time = SLEEP_TIME
+        self._left_sensor_pid = PidController(KP, KI, KD, TARGET_VALUE_LEFT, MAX_OUT)
+        self._right_sensor_pid = PidController(KP, KI, KD, TARGET_VALUE_RIGHT, MAX_OUT)
+        gpio = GpioWrapper()
+        self._sensors_adc = LineSensorsAdc(gpio)
+        self._bot_truck = Truck(LeftMotor(gpio), RightMotor(gpio))
 
-class LineSensor(object):
-    def calibrate(self):
-        pass
+    def run(self):
+        while True:
+            values = self._sensors_adc.readSensors()
+            left_sensor_value = values[1]
+            right_sensor_value = values[3]
+            left_sensor_pid_out = self._left_sensor_pid.getOutput(left_sensor_value)
+            right_sensor_pid_out = self._right_sensor_pid.getOutput(right_sensor_value)
 
-    def getTargetValue(self):
-        return 0
+            if left_sensor_pid_out is None or right_sensor_pid_out is None:
+                continue
 
-    def getCurrentValue(self):
-        return 0
+            if left_sensor_pid_out < 0:
+                self._bot_truck.setSpeedPower(0)  # without stops bot doe not follow line
+                self._bot_truck.setTurnPower(-left_sensor_pid_out)
+                continue
 
+            if right_sensor_pid_out < 0:
+                self._bot_truck.setSpeedPower(1)
+                self._bot_truck.setTurnPower(right_sensor_pid_out)
+                continue
+            self._bot_truck.setTurnPower(0)
+            self._bot_truck.setSpeedPower(self._speed_power)
+            time.sleep(self._sleep_time)
 
-# kp = 0.285
-kp = 0.1
-speed_power = 20
-sleep_time = 0.01
-
-'''
-joystick = Joystick()
-joystick.waitForCentralKeyPressed()
-
-line_sensor = LineSensor()
-line_sensor.calibrate()
-'''
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.INFO)
-
-gpio = GpioWrapper()
-sensors_adc = LineSensorsAdc(gpio)
-leftMotor = LeftMotor(gpio)
-rightMotor = RightMotor(gpio)
-bot_truck = Truck(leftMotor, rightMotor)
-
-
-def create_pid_for_left_sensor() -> PidController:
-    ki = 0
-    # kp = 0.285
-    kd = 0
-    target_value_left = 350
-    max_out = 100
-    pid = PidController(kp, ki, kd, target_value_left, max_out)
-    return pid
+    @property
+    def logger(self):
+        return self._logger
 
 
-def create_pid_for_right_sensor() -> PidController:
-    ki = 0
-    # kp = 0.285
-    kd = 0
-    target_value_left = 300
-    max_out = 100
-    pid = PidController(kp, ki, kd, target_value_left, max_out)
-    return pid
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    follower = LineFollower()
+    follower.logger.setLevel(level=logging.INFO)
+    follower.run()
 
-
-def setTurnPowerMock(out):
-    logger.info("bot_truck.setTurnPower({})".format(out))
-
-
-def setSpeedPowerMock(speed_power):
-    logger.info("bot_truck.setSpeedPower({})".format(speed_power))
-
-
-# bot_truck.setTurnPower = setTurnPowerMock
-# bot_truck.setSpeedPower = setSpeedPowerMock
-
-left_sensor_pid = create_pid_for_left_sensor()
-right_sensor_pid = create_pid_for_right_sensor()
-
-while True:
-    time.sleep(sleep_time)
-    values = sensors_adc.readSensors()
-    left_sensor_value = values[1]
-    right_sensor_value = values[3]
-    left_sensor_pid_out = left_sensor_pid.getOutput(left_sensor_value)
-    right_sensor_pid_out = right_sensor_pid.getOutput(right_sensor_value)
-
-    if left_sensor_pid_out is None or right_sensor_pid_out is None:
-        continue
-
-    if left_sensor_pid_out < 0:
-        bot_truck.setSpeedPower(1)
-        bot_truck.setTurnPower(-left_sensor_pid_out)
-        continue
-
-    if right_sensor_pid_out < 0:
-        bot_truck.setSpeedPower(1)
-        bot_truck.setTurnPower(right_sensor_pid_out)
-        continue
-    bot_truck.setTurnPower(0)
-    bot_truck.setSpeedPower(speed_power)
-
-# Делаем контроль по вторым датчикам
-# Для левого датчика target_value = 225-316
-# Для правого датчика target_value = 193-269
-# White [840 771 877 672 704]
-#       [695 648 699 572 606]
-#       [889 796 891 690 759]
-# Black - 200-320
-#       [303 278 279 252 292]
-#       [238 225 220 193 206]
-#       [342 316 307 269 301]
-# Middle on the border
-#       [281 252 572 652 682]
-#       [244 239 380 623 649]
-#       [358 323 672 684 719]
-# Tree middle on the black
-
-# Делаем для левого датчика целевое значение 350 при этом воздействие только вправо в обратную сторону игнорируем.
-# При 350 значение выходного воздействия должно быть 0, при 700 - 100%
-# Делаем для правого датчика целевое значение 300 при этом воздействие только вправо в обратную сторону игнорируем.
-# При 300 значение выходного воздействия должно быть 0, при 650 - 100%
