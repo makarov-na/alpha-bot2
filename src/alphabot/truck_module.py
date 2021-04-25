@@ -83,3 +83,9 @@ class Truck:
 
     def _swapValues(self, left_motor_power, right_motor_power):
         return right_motor_power, left_motor_power
+
+    def getSpeedPower(self):
+        return self._speed_power
+
+    def getTurnPower(self):
+        return self._rotation_power

@@ -173,6 +173,24 @@ class TestPid(unittest.TestCase):
         self.assertIsNotNone(output)
         self.assertEqual(-50, round(output))
 
+    def test_telemetry(self):
+
+        # GIVEN
+        target_value = 350
+        pid = self._create_pid()
+        pid._target_value = target_value
+        current_value = 700
+
+        # WHEN
+        output = pid.getOutput(0)
+        time.sleep(0.02)
+        output = pid.getOutput(current_value)
+
+        # THEN
+        print(pid.getTelemetryData())
+        self.assertEqual(output, pid.getTelemetryData()['o'])
+        self.assertEqual(target_value - current_value, pid.getTelemetryData()['err'])
+
 
 if __name__ == '__main__':
     unittest.main()

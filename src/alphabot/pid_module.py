@@ -15,13 +15,14 @@ class PidController(object):
         self._prevent_error = None
         self._integral_value = 0
         self._differential_value = 0
+        self._telemetry_data = None
 
-    def getOutput(self, current_value):
-        delta_time = self._calculateDeltaTimeInMs()
+    def getOutput(self, current_value, delta_time=None):
+        if delta_time is None:
+            delta_time = self._calculateDeltaTimeInMs()
         error = self._calculateError(current_value)
         if delta_time is None or error is None:
             return None
-
         proportional_out = self._calculateProportionalOutput(error)
         integral_out = self._calculateIntegralOutput(error, delta_time)
         differential_out = self._calculateDifferentialOutput(error, delta_time)
@@ -29,6 +30,8 @@ class PidController(object):
         out = proportional_out + integral_out + differential_out
         if abs(out) > self._max_out:
             out = out * (self._max_out / abs(out))
+
+        self._telemetry_data = {'dt': delta_time, 'err': error, 'o': out, 'po': proportional_out, 'io': integral_out, 'do': differential_out}
         return out
 
     def _calculateDeltaTimeInMs(self):
@@ -57,3 +60,6 @@ class PidController(object):
         differential_value = (error - self._prevent_error) / delta_time
         self._prevent_error = error
         return self._kd * differential_value
+
+    def getTelemetryData(self) -> dict:
+        return self._telemetry_data
