@@ -17,9 +17,7 @@ class PidController(object):
         self._differential_value = 0
         self._telemetry_data = None
 
-    def getOutput(self, current_value, delta_time=None):
-        if delta_time is None:
-            delta_time = self._calculateDeltaTimeInMs()
+    def getOutput(self, current_value, delta_time):
         error = self._calculateError(current_value)
         if delta_time is None or error is None:
             return None
@@ -33,13 +31,6 @@ class PidController(object):
 
         self._telemetry_data = {'dt': delta_time, 'err': error, 'o': out, 'po': proportional_out, 'io': integral_out, 'do': differential_out}
         return out
-
-    def _calculateDeltaTimeInMs(self):
-        current_time = time.time_ns()
-        if self._prevent_time is None:
-            self._prevent_time = current_time
-            return None
-        return (self._prevent_time - current_time) // 1_000_000
 
     def _calculateError(self, current_value):
         return self._target_value - current_value

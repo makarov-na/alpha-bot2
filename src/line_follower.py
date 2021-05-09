@@ -10,7 +10,7 @@ import logging
 
 class LineFollower:
 
-    def __init__(self):
+    def __init__(self, gpio: GpioWrapper = None):
         # KP = 0.285
         KP = 0.1
         KD = 0.1
@@ -27,7 +27,8 @@ class LineFollower:
         self._sleep_time = SLEEP_TIME
         self._left_sensor_pid = PidController(KP, KI, KD, TARGET_VALUE_LEFT, MAX_OUT)
         self._right_sensor_pid = PidController(KP, KI, KD, TARGET_VALUE_RIGHT, MAX_OUT)
-        gpio = GpioWrapper()
+        if gpio is None:
+            gpio = GpioWrapper()
         self._sensors_adc = LineSensorsAdc(gpio)
         self._bot_truck = Truck(LeftMotor(gpio), RightMotor(gpio))
         self._telemetry = Telemetry()
@@ -36,6 +37,8 @@ class LineFollower:
         while True:
 
             delta_time = self._calculateDeltaTimeInMs()
+            if delta_time is None:
+                continue
             all_sensors_values = self._sensors_adc.readSensors()
             left_sensor_value = all_sensors_values[1]
             right_sensor_value = all_sensors_values[3]
@@ -45,12 +48,12 @@ class LineFollower:
                 continue
 
             if left_sensor_pid_out < 0:
-                self._bot_truck.setSpeedPower(0)  # without stops bot doe not follow line
+                # self._bot_truck.setSpeedPower(0)  # without stops bot doe not follow line
                 self._bot_truck.setTurnPower(-left_sensor_pid_out)
                 continue
 
             if right_sensor_pid_out < 0:
-                self._bot_truck.setSpeedPower(1)
+                # self._bot_truck.setSpeedPower(1)
                 self._bot_truck.setTurnPower(right_sensor_pid_out)
                 continue
             self._bot_truck.setTurnPower(0)
@@ -69,7 +72,9 @@ class LineFollower:
         if self._prevent_time is None:
             self._prevent_time = current_time
             return None
-        return (self._prevent_time - current_time) // 1_000_000
+        delta_time = (current_time - self._prevent_time) // 1_000_000
+        self._prevent_time = current_time
+        return delta_time
 
 
 if __name__ == "__main__":

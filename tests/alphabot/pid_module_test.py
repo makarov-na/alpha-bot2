@@ -96,9 +96,7 @@ class TestPid(unittest.TestCase):
         current_value = 0
 
         # WHEN
-        output = pid.getOutput(0)
-        time.sleep(0.02)
-        output = pid.getOutput(current_value)
+        output = pid.getOutput(current_value, 200)
 
         # THEN
         self.assertIsNotNone(output)
@@ -125,9 +123,7 @@ class TestPid(unittest.TestCase):
         current_value = 350
 
         # WHEN
-        output = pid.getOutput(0)
-        time.sleep(0.02)
-        output = pid.getOutput(current_value)
+        output = pid.getOutput(current_value, 200)
 
         # THEN
         self.assertIsNotNone(output)
@@ -145,9 +141,7 @@ class TestPid(unittest.TestCase):
         current_value = 700
 
         # WHEN
-        output = pid.getOutput(0)
-        time.sleep(0.02)
-        output = pid.getOutput(current_value)
+        output = pid.getOutput(current_value, 200)
 
         # THEN
         self.assertIsNotNone(output)
@@ -165,9 +159,7 @@ class TestPid(unittest.TestCase):
         current_value = (700 - 350) / 2 + 350
 
         # WHEN
-        output = pid.getOutput(0)
-        time.sleep(0.02)
-        output = pid.getOutput(current_value)
+        output = pid.getOutput(current_value, 200)
 
         # THEN
         self.assertIsNotNone(output)
@@ -182,9 +174,7 @@ class TestPid(unittest.TestCase):
         current_value = 700
 
         # WHEN
-        output = pid.getOutput(0)
-        time.sleep(0.02)
-        output = pid.getOutput(current_value)
+        output = pid.getOutput(current_value, 200)
 
         # THEN
         print(pid.getTelemetryData())

@@ -6,6 +6,7 @@ from alphabot.truck_module import Truck
 
 logging.basicConfig(level=logging.INFO)
 
+
 class TestTruck(unittest.TestCase):
 
     def test_speed_power_positive_set(self):
