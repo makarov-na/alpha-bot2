@@ -19,7 +19,7 @@ class LineFollower:
         TARGET_VALUE_RIGHT = 300
         MAX_OUT = 100
         SPEED_POWER = 20
-        SLEEP_TIME = 0.01
+        SLEEP_TIME = 0.0001
 
         self._prevent_time = None
         self._logger = logging.getLogger(__name__)
@@ -35,6 +35,7 @@ class LineFollower:
 
     def run(self):
         while True:
+            time.sleep(self._sleep_time)
 
             delta_time = self._calculateDeltaTimeInMs()
             if delta_time is None:
@@ -50,18 +51,21 @@ class LineFollower:
             if left_sensor_pid_out < 0:
                 # self._bot_truck.setSpeedPower(0)  # without stops bot doe not follow line
                 self._bot_truck.setTurnPower(-left_sensor_pid_out)
+                self._sendTelemetry(all_sensors_values, delta_time)
                 continue
 
             if right_sensor_pid_out < 0:
                 # self._bot_truck.setSpeedPower(1)
                 self._bot_truck.setTurnPower(right_sensor_pid_out)
+                self._sendTelemetry(all_sensors_values, delta_time)
                 continue
             self._bot_truck.setTurnPower(0)
             self._bot_truck.setSpeedPower(self._speed_power)
+            self._sendTelemetry(all_sensors_values, delta_time)
 
-            self._telemetry.send({'flv': {'dt': delta_time, 'sns': all_sensors_values, 'sp': self._bot_truck.getSpeedPower(), 'tn': self._bot_truck.getTurnPower()},
-                                  'lp': self._left_sensor_pid.getTelemetryData(), 'rp': self._right_sensor_pid.getTelemetryData()})
-            time.sleep(self._sleep_time)
+    def _sendTelemetry(self, all_sensors_values, delta_time):
+        self._telemetry.send({'flv': {'dt': delta_time, 'sns': all_sensors_values, 'sp': self._bot_truck.getSpeedPower(), 'tn': self._bot_truck.getTurnPower()},
+                              'lp': self._left_sensor_pid.getTelemetryData(), 'rp': self._right_sensor_pid.getTelemetryData()})
 
     @property
     def logger(self):
