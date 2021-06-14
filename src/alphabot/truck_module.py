@@ -19,7 +19,7 @@ class Truck:
 
     def setTurnPower(self, turn_power):
         if abs(turn_power) > Motor.MAX_VALUE:
-            raise Exception("Power value must be between {} to {}".format(-Motor.MAX_VALUE, Motor.MAX_VALUE))
+            raise Exception("Power value must be between {} to {}. Actual value {}".format(-Motor.MAX_VALUE, Motor.MAX_VALUE, turn_power))
         self._rotation_power = turn_power
         self._sendOutputToMotors()
 

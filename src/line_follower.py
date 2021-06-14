@@ -12,13 +12,13 @@ class LineFollower:
 
     def __init__(self, gpio: GpioWrapper = None):
         # KP = 0.285
-        KP = 0.1
-        KD = 0.1
+        KP = 0.3
+        KD = 0.3
         KI = 0
         TARGET_VALUE_LEFT = 350
         TARGET_VALUE_RIGHT = 300
         MAX_OUT = 100
-        SPEED_POWER = 20
+        SPEED_POWER = 12
         SLEEP_TIME = 0.0001
 
         self._prevent_time = None
