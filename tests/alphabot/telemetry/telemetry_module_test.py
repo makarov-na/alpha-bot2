@@ -14,7 +14,7 @@ class TestTelemetry(unittest.TestCase):
         shutil.rmtree(telemetry_path)
 
         # WHEN
-        telemetry = Telemetry()
+        telemetry = Telemetry(1)
 
         # THEN
         self.assertEqual(datetime.now().strftime("%Y-%m-%d_%H:%M:%S") + ".log", telemetry._file_name)
@@ -22,7 +22,7 @@ class TestTelemetry(unittest.TestCase):
 
     def test_write_file(self):
         # GIVEN
-        telemetry = Telemetry()
+        telemetry = Telemetry(1)
         # WHEN
         telemetry.send({'test': 'test'})
         telemetry.send({'test1': 'test1'})
