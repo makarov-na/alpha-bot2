@@ -4,16 +4,24 @@ import time
 from alphabot.hardware.gpio_module import GpioWrapper
 from alphabot.hardware.line_sensor_module import LineSensorsAdc
 from alphabot.telemetry.telemetry_module import Telemetry
+from alphabot.hardware.motor_module import LeftMotor, RightMotor
+from alphabot.truck_module import Truck
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-
-
+gpio = GpioWrapper()
 sensors_adc = LineSensorsAdc(GpioWrapper())
 telemetry = Telemetry()
 prevent_time = None
 current_time_before_all = time.time_ns()
-for i in range(0, 1_001):
+
+
+
+speed_power = 25
+truck = Truck(LeftMotor(gpio), RightMotor(gpio))
+truck.setSpeedPower(speed_power)
+for i in range(0, 5000):
     all_sensors_values = sensors_adc.readSensors()
     current_time = time.time_ns()
     if prevent_time is None:
@@ -24,8 +32,7 @@ for i in range(0, 1_001):
     telemetry_item = {'dt': delta_time_ms, 'sns': all_sensors_values}
     telemetry.send(telemetry_item)
     logging.info(telemetry_item)
-    time.sleep(0.01)
-current_time_after_all = time.time_ns()
-delta_time_all_test_ms = (current_time_after_all - current_time_before_all) / 1_000_000
+    time.sleep(0.001)
+truck.setTurnPower(0)
 
-logger.info("avg time: " + str(delta_time_all_test_ms / 1_000))
+

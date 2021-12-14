@@ -4,7 +4,7 @@ import os
 
 class Telemetry:
 
-    def __init__(self, buffer_size=1000):
+    def __init__(self, buffer_size=100):
         self._buffer_size = buffer_size
         self._telemetry_path = os.path.expanduser('~/.alpha-bot2')
         if not os.path.exists(self._telemetry_path):
