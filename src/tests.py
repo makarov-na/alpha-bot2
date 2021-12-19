@@ -18,9 +18,10 @@ current_time_before_all = time.time_ns()
 
 
 
-speed_power = 25
+speed_power = 0
 truck = Truck(LeftMotor(gpio), RightMotor(gpio))
 truck.setSpeedPower(speed_power)
+truck.setTurnPower(50)
 for i in range(0, 5000):
     all_sensors_values = sensors_adc.readSensors()
     current_time = time.time_ns()
@@ -34,5 +35,6 @@ for i in range(0, 5000):
     logging.info(telemetry_item)
     time.sleep(0.001)
 truck.setTurnPower(0)
+truck.setSpeedPower(0)
 
 
