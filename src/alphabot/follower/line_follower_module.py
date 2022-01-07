@@ -1,3 +1,4 @@
+from alphabot.follower.line_sensor_module import LineSensorNormalizer
 from alphabot.hardware.gpio_module import GpioWrapper
 from alphabot.hardware.line_sensor_module import LineSensorsAdc
 from alphabot.hardware.motor_module import LeftMotor, RightMotor
@@ -8,18 +9,30 @@ import time
 import logging
 
 
+class LineFollowerConfig:
+    # TODO
+
+    pass
+
+
 class LineFollower:
 
-    def __init__(self, gpio: GpioWrapper = None):
+    def __init__(self, configuration: LineFollowerConfig = None, gpio: GpioWrapper = None):
+
+        if gpio is None:
+            gpio = GpioWrapper()
+
         # KP = 0.285
         KP = 0.3
         KD = 0.3
         KI = 0
-        TARGET_VALUE_LEFT = 350
-        TARGET_VALUE_RIGHT = 300
         MAX_OUT = 100
         SPEED_POWER = 12
-        SLEEP_TIME = 0.0001
+        SLEEP_TIME = 0.00001
+
+        self._sensor = LineSensorNormalizer(LineSensorsAdc(gpio))
+        TARGET_VALUE_LEFT = self._sensor.getMinValues()[1]
+        TARGET_VALUE_RIGHT = self._sensor.getMinValues()[3]
 
         self._prevent_time = None
         self._logger = logging.getLogger(__name__)
@@ -27,9 +40,6 @@ class LineFollower:
         self._sleep_time = SLEEP_TIME
         self._left_sensor_pid = PidController(KP, KI, KD, TARGET_VALUE_LEFT, MAX_OUT)
         self._right_sensor_pid = PidController(KP, KI, KD, TARGET_VALUE_RIGHT, MAX_OUT)
-        if gpio is None:
-            gpio = GpioWrapper()
-        self._sensors_adc = LineSensorsAdc(gpio)
         self._bot_truck = Truck(LeftMotor(gpio), RightMotor(gpio))
         self._telemetry = Telemetry()
 
@@ -40,7 +50,7 @@ class LineFollower:
             delta_time = self._calculateDeltaTimeInMs()
             if delta_time is None:
                 continue
-            all_sensors_values = self._sensors_adc.readSensors()
+            all_sensors_values = self._sensor.readSensors()
             left_sensor_value = all_sensors_values[1]
             right_sensor_value = all_sensors_values[3]
             left_sensor_pid_out = self._left_sensor_pid.getOutput(left_sensor_value, delta_time)

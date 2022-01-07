@@ -1,6 +1,5 @@
 import time
 
-
 class PidController(object):
 
     def __init__(self, kp, ki, kd, target_value, max_out) -> None:
@@ -27,7 +26,7 @@ class PidController(object):
 
         out = proportional_out + integral_out + differential_out
         if abs(out) > self._max_out:
-            out = out * (self._max_out / abs(out))
+            out = self._max_out * int(out / abs(out))
 
         self._telemetry_data = {'dt': delta_time, 'err': error, 'o': out, 'po': proportional_out, 'io': integral_out, 'do': differential_out}
         return out
