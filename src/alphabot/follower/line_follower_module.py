@@ -58,17 +58,22 @@ class LineFollower:
             if left_sensor_pid_out is None or right_sensor_pid_out is None:
                 continue
 
+            if left_sensor_pid_out < 0 and right_sensor_pid_out < 0:
+                if left_sensor_pid_out < right_sensor_pid_out:
+                    right_sensor_pid_out = 0
+                elif right_sensor_pid_out < left_sensor_pid_out:
+                    left_sensor_pid_out = 0
+
             if left_sensor_pid_out < 0:
-                # self._bot_truck.setSpeedPower(0)  # without stops bot doe not follow line
                 self._bot_truck.setTurnPower(-left_sensor_pid_out)
                 self._sendTelemetry(all_sensors_values, delta_time)
                 continue
 
             if right_sensor_pid_out < 0:
-                # self._bot_truck.setSpeedPower(1)
                 self._bot_truck.setTurnPower(right_sensor_pid_out)
                 self._sendTelemetry(all_sensors_values, delta_time)
                 continue
+
             self._bot_truck.setTurnPower(0)
             self._bot_truck.setSpeedPower(self._speed_power)
             self._sendTelemetry(all_sensors_values, delta_time)
