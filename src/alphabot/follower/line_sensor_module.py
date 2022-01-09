@@ -1,5 +1,3 @@
-from array import array
-
 import numpy as np
 
 from alphabot.hardware.line_sensor_module import LineSensorsAdc
@@ -10,7 +8,6 @@ class LineSensorNormalizer:
     def __init__(self, sensors_adc: LineSensorsAdc, min_values: list = None, max_values: list = None):
         self._sensors_adc = sensors_adc
         if min_values is None:
-
             min_values = [311, 265, 272, 247, 270]
         if max_values is None:
             max_values = [783, 733, 861, 658, 660]

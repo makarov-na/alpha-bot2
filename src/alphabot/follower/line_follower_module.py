@@ -94,10 +94,3 @@ class LineFollower:
         delta_time = (current_time - self._prevent_time) // 1_000_000
         self._prevent_time = current_time
         return delta_time
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    follower = LineFollower()
-    follower.logger.setLevel(level=logging.INFO)
-    follower.run()
