@@ -1,5 +1,3 @@
-import time
-
 class PidController(object):
 
     def __init__(self, kp, ki, kd, target_value, max_out) -> None:
@@ -38,7 +36,12 @@ class PidController(object):
         return self._kp * error
 
     def _calculateIntegralOutput(self, error, delta_time):
-        integral_value = self._integral_value + error * delta_time
+        if error == 0:
+            self._integral_value = 0
+        sign = 1
+        if self._prevent_error is not None and error - self._prevent_error != 0:
+            sign = -int((error - self._prevent_error) / abs(error - self._prevent_error))
+        integral_value = self._integral_value + error * delta_time * sign
         if abs(self._ki * integral_value) <= self._max_integral_out:
             self._integral_value = integral_value
         return self._ki * self._integral_value
