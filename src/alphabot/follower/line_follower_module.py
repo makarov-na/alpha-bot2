@@ -28,7 +28,7 @@ class LineFollower:
         KI = 0
         MAX_OUT = 30
         SPEED_POWER = 12
-        SLEEP_TIME = 1/1_000_000*10
+        SLEEP_TIME = 1 / 1_000_000 * 10
 
         self._sensor = LineSensorNormalizer(LineSensorsAdc(gpio))
         TARGET_VALUE_LEFT = self._sensor.getMinValues()[1]
@@ -80,8 +80,20 @@ class LineFollower:
             self._sendTelemetry(all_sensors_values, delta_time)
 
     def _sendTelemetry(self, all_sensors_values, delta_time):
-        self._telemetry.send({'flv': {'dt': delta_time, 'sns': all_sensors_values, 'sp': self._bot_truck.getSpeedPower(), 'tn': self._bot_truck.getTurnPower()},
-                              'lp': self._left_sensor_pid.getTelemetryData(), 'rp': self._right_sensor_pid.getTelemetryData()})
+        self._telemetry.send(
+            {
+                'flv':
+                    {
+                        'tm': time.time_ns(),
+                        'dt': delta_time,
+                        'sns': all_sensors_values,
+                        'sp': self._bot_truck.getSpeedPower(),
+                        'tn': self._bot_truck.getTurnPower()
+                    },
+                'lp': self._left_sensor_pid.getTelemetryData(),
+                'rp': self._right_sensor_pid.getTelemetryData()
+            }
+        )
 
     @property
     def logger(self):
