@@ -26,7 +26,7 @@ class LineFollower:
         KP = 0.3
         KD = 0.3
         KI = 0
-        MAX_OUT = 100
+        MAX_OUT = 30
         SPEED_POWER = 12
         SLEEP_TIME = 1/1_000_000*10
 
@@ -55,6 +55,7 @@ class LineFollower:
             right_sensor_value = all_sensors_values[3]
             left_sensor_pid_out = self._left_sensor_pid.getOutput(left_sensor_value, delta_time)
             right_sensor_pid_out = self._right_sensor_pid.getOutput(right_sensor_value, delta_time)
+
             if left_sensor_pid_out is None or right_sensor_pid_out is None:
                 continue
 
