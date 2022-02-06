@@ -28,7 +28,7 @@ class LineFollower:
         KI = 0
         MAX_OUT = 100
         SPEED_POWER = 12
-        SLEEP_TIME = 0.00001
+        SLEEP_TIME = 1/1_000_000*10
 
         self._sensor = LineSensorNormalizer(LineSensorsAdc(gpio))
         TARGET_VALUE_LEFT = self._sensor.getMinValues()[1]
@@ -92,5 +92,14 @@ class LineFollower:
             self._prevent_time = current_time
             return None
         delta_time = (current_time - self._prevent_time) // 1_000_000
+        self._prevent_time = current_time
+        return delta_time
+
+    def _calculateDeltaTimeInMcs(self):
+        current_time = time.time_ns()
+        if self._prevent_time is None:
+            self._prevent_time = current_time
+            return None
+        delta_time = (current_time - self._prevent_time) // 1_000
         self._prevent_time = current_time
         return delta_time
