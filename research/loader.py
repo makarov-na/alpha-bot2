@@ -26,6 +26,7 @@ def load_data(file_name):
 
     result['left_pid_out'] = []
     result['right_pid_out'] = []
+    result['tm'] = []
 
     for line in lines:
         metric = eval(line)
@@ -36,5 +37,7 @@ def load_data(file_name):
         result['sensor4'].append(metric['flv']['sns'][4])
         result['left_pid_out'].append(metric['lp']['o'] * -1)
         result['right_pid_out'].append(metric['rp']['o'] * -1)
+        if ('tm' in metric['flv']):
+            result['tm'].append(metric['flv']['tm'])
 
     return result
