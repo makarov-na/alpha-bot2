@@ -10,7 +10,7 @@ import logging
 
 
 class LineFollowerConfig:
-    # TODO
+    # TODO Вынести конфигурацию
 
     pass
 
@@ -19,6 +19,7 @@ class LineFollower:
 
     def __init__(self, configuration: LineFollowerConfig = None, gpio: GpioWrapper = None):
 
+        # TODO Убрать эту инициализацию
         if gpio is None:
             gpio = GpioWrapper()
 
