@@ -23,9 +23,8 @@ class LineFollower:
         if gpio is None:
             gpio = GpioWrapper()
 
-        # KP = 0.285
         KP = 0.3
-        KD = 0.3
+        KD = 1
         KI = 0
         MAX_OUT = 30
         SPEED_POWER = 12
@@ -113,6 +112,6 @@ class LineFollower:
         if self._prevent_time is None:
             self._prevent_time = current_time
             return None
-        delta_time = (current_time - self._prevent_time) // 1_000
+        delta_time = round((current_time - self._prevent_time) / 1_000)
         self._prevent_time = current_time
         return delta_time
