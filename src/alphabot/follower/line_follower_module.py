@@ -27,6 +27,7 @@ class LineFollower:
         KD = 1
         KI = 0
         MAX_OUT = 30
+        self._MIN_OUT = 1
         SPEED_POWER = 12
         SLEEP_TIME = 1 / 1_000_000 * 10
         TARGET_VALUE_LEFT = 0
@@ -65,12 +66,12 @@ class LineFollower:
                     left_sensor_pid_out = 0
 
             if left_sensor_pid_out < 0:
-                self._bot_truck.setTurnPower(-left_sensor_pid_out)
+                self._bot_truck.setTurnPower(-(left_sensor_pid_out + self._MIN_OUT))
                 self._sendTelemetry(all_sensors_values, delta_time)
                 continue
 
             if right_sensor_pid_out < 0:
-                self._bot_truck.setTurnPower(right_sensor_pid_out)
+                self._bot_truck.setTurnPower(right_sensor_pid_out + self._MIN_OUT)
                 self._sendTelemetry(all_sensors_values, delta_time)
                 continue
 
