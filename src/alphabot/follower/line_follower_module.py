@@ -27,7 +27,7 @@ class LineFollower:
         KD = 1
         KI = 0
         MAX_OUT = 30
-        SPEED_POWER = 12
+        SPEED_POWER = 13
         SLEEP_TIME = 1 / 1_000_000 * 10
         TARGET_VALUE_LEFT = 0
         TARGET_VALUE_RIGHT = 0
