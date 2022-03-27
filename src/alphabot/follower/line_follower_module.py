@@ -1,6 +1,6 @@
-from alphabot.follower.line_sensor_module import LineSensorNormalizer
+from alphabot.follower.line_sensor_module import LineSensorNormalizer, LineSensorFilter
 from alphabot.hardware.gpio_module import GpioWrapper
-from alphabot.hardware.line_sensor_module import LineSensorsAdc
+from alphabot.hardware.line_sensor_module import LineSensorsAdc, LineSensor
 from alphabot.hardware.motor_module import LeftMotor, RightMotor
 from alphabot.pid_module import PidController
 from alphabot.telemetry.telemetry_module import Telemetry
@@ -32,7 +32,7 @@ class LineFollower:
         TARGET_VALUE_LEFT = 0
         TARGET_VALUE_RIGHT = 0
 
-        self._sensor = LineSensorNormalizer(LineSensorsAdc(gpio))
+        self._sensor: LineSensor = LineSensorFilter(LineSensorNormalizer(LineSensorsAdc(gpio)))
         self._prevent_time = None
         self._logger = logging.getLogger(__name__)
         self._speed_power = SPEED_POWER

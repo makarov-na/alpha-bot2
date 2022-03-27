@@ -1,9 +1,19 @@
 import time
+from typing import List
+
 from alphabot.hardware.gpio_module import GpioWrapper
 
 
 # TLC1543 ANALOG-TO-DIGITAL CONVERTER
-class LineSensorsAdc:
+
+# TODO Make class abstract
+class LineSensor:
+
+    def readSensors(self) -> List:
+        pass
+
+
+class LineSensorsAdc(LineSensor):
 
     def __init__(self, gpio: GpioWrapper):
         self._numSensors = 5
@@ -18,7 +28,7 @@ class LineSensorsAdc:
         self._gpio.setup(self._CS_PIN, self._gpio.OUT)
         self._gpio.setup(self._DATA_OUT_PIN, self._gpio.IN, self._gpio.PUD_UP)
 
-    def readSensors(self):
+    def readSensors(self) -> List:
         sensor_values = [0] * self._numSensors
         for sensor_address in range(0, self._numSensors):
             self._setCsToLowLevel()
