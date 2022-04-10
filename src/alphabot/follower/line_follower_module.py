@@ -27,12 +27,12 @@ class LineFollower:
         KD = 20
         KI = 0
         MAX_OUT = 40
-        SPEED_POWER = 14
+        SPEED_POWER = 20
         SLEEP_TIME = 1 / 1_000_000 * 10
         TARGET_VALUE_LEFT = 0
         TARGET_VALUE_RIGHT = 0
 
-        self._sensor: LineSensor = LineSensorFilter(LineSensorNormalizer(LineSensorsAdc(gpio)))
+        self._sensor: LineSensor = LineSensorNormalizer(LineSensorFilter(LineSensorsAdc(gpio)))
         self._prevent_time = None
         self._logger = logging.getLogger(__name__)
         self._speed_power = SPEED_POWER
