@@ -1,14 +1,15 @@
 import time
 from typing import List
 
+from abc import ABC, abstractmethod
 from alphabot.hardware.gpio_module import GpioWrapper
 
 
 # TLC1543 ANALOG-TO-DIGITAL CONVERTER
 
-# TODO Make class abstract
-class LineSensor:
+class LineSensor(ABC):
 
+    @abstractmethod
     def readSensors(self) -> List:
         pass
 
