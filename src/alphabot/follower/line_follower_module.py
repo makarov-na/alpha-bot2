@@ -10,37 +10,29 @@ import logging
 
 
 class LineFollowerConfig:
-    # TODO Вынести конфигурацию
-
-    pass
+    def __init__(self) -> None:
+        self.KP = 0.3
+        self.KD = 20
+        self.KI = 0
+        self.MAX_OUT = 40
+        self.SPEED_POWER = 18
+        self.SLEEP_TIME = 1 / 1_000_000 * 10
+        self.TARGET_VALUE_LEFT = 0
+        self.TARGET_VALUE_RIGHT = 0
 
 
 class LineFollower:
 
-    def __init__(self, configuration: LineFollowerConfig = None, gpio: GpioWrapper = None):
-
-        # TODO Убрать эту инициализацию
-        if gpio is None:
-            gpio = GpioWrapper()
-
-        KP = 0.3
-        KD = 20
-        KI = 0
-        MAX_OUT = 40
-        SPEED_POWER = 20
-        SLEEP_TIME = 1 / 1_000_000 * 10
-        TARGET_VALUE_LEFT = 0
-        TARGET_VALUE_RIGHT = 0
-
+    def __init__(self, config: LineFollowerConfig = LineFollowerConfig(), gpio: GpioWrapper = None):
         self._sensor: LineSensor = LineSensorNormalizer(LineSensorFilter(LineSensorsAdc(gpio)))
-        self._prevent_time = None
         self._logger = logging.getLogger(__name__)
-        self._speed_power = SPEED_POWER
-        self._sleep_time = SLEEP_TIME
-        self._left_sensor_pid = PidController(KP, KI, KD, TARGET_VALUE_LEFT, MAX_OUT)
-        self._right_sensor_pid = PidController(KP, KI, KD, TARGET_VALUE_RIGHT, MAX_OUT)
+        self._speed_power = config.SPEED_POWER
+        self._sleep_time = config.SLEEP_TIME
+        self._left_sensor_pid = PidController(config.KP, config.KI, config.KD, config.TARGET_VALUE_LEFT, config.MAX_OUT)
+        self._right_sensor_pid = PidController(config.KP, config.KI, config.KD, config.TARGET_VALUE_RIGHT, config.MAX_OUT)
         self._bot_truck = Truck(LeftMotor(gpio), RightMotor(gpio))
         self._telemetry = Telemetry()
+        self._prevent_time_ns = None
 
     def run(self):
         while True:
