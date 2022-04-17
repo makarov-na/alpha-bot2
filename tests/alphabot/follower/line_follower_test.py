@@ -7,18 +7,24 @@ from alphabot.follower.line_follower_module import LineFollower
 
 class TestLineFollower(unittest.TestCase):
 
-    def test_calculate_delta_time_ms(self):
+    def test_calculate_delta_time_ms_one_second(self):
         # GIVEN
         line_follower = LineFollower(gpio=MagicMock())
-        line_follower._calculateDeltaTimeInMs()
+        dt_ns = (1 * (10 ** 9))
 
         # WHEN
-        time.sleep(0.01)
-        dt1 = line_follower._calculateDeltaTimeInMs()
-
-        time.sleep(0.01)
-        dt2 = line_follower._calculateDeltaTimeInMs()
+        time_ms = line_follower.to_ms(dt_ns)
 
         # THEN
-        self.assertEqual(0.01, dt1 / 1000)
-        self.assertEqual(0.01, dt2 / 1000)
+        self.assertEqual(1000, time_ms)
+
+    def test_calculate_delta_time_ms_150_mks(self):
+        # GIVEN
+        line_follower = LineFollower(gpio=MagicMock())
+        dt_ns = (154 * (10 ** 3))
+
+        # WHEN
+        time_ms = line_follower.to_ms(dt_ns)
+
+        # THEN
+        self.assertEqual(0.154, time_ms)

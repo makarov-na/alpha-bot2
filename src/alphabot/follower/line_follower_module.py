@@ -46,9 +46,11 @@ class LineFollower:
         while True:
             time.sleep(self._sleep_time)
 
-            delta_time = self._calculateDeltaTimeInMs()
-            if delta_time is None:
+            delta_time_ns = self._calculateDeltaTimeInNanos()
+            if delta_time_ns is None:
                 continue
+            delta_time = self.to_ms(delta_time_ns)
+
             all_sensors_values = self._sensor.readSensors()
             left_sensor_value = all_sensors_values[1]
             right_sensor_value = all_sensors_values[3]
@@ -98,20 +100,17 @@ class LineFollower:
     def logger(self):
         return self._logger
 
-    def _calculateDeltaTimeInMs(self):
-        current_time = time.time_ns()
-        if self._prevent_time is None:
-            self._prevent_time = current_time
+    def _calculateDeltaTimeInNanos(self):
+        current_time_ns = time.time_ns()
+        if self._prevent_time_ns is None:
+            self._prevent_time_ns = current_time_ns
             return None
-        delta_time = (current_time - self._prevent_time) // 1_000_000
-        self._prevent_time = current_time
-        return delta_time
+        delta_time_ns = (current_time_ns - self._prevent_time_ns)
+        self._prevent_time_ns = current_time_ns
+        return delta_time_ns
 
-    def _calculateDeltaTimeInMcs(self):
-        current_time = time.time_ns()
-        if self._prevent_time is None:
-            self._prevent_time = current_time
-            return None
-        delta_time = round((current_time - self._prevent_time) / 1_000)
-        self._prevent_time = current_time
-        return delta_time
+    def to_ms(self, time_ns):
+        return time_ns / 1_000_000
+
+    def to_mcs(self, time_ns):
+        return time_ns / 1_000
