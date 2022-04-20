@@ -3,7 +3,7 @@ from typing import List
 
 import numpy as np
 
-from alphabot.hardware.line_sensor_module import LineSensorsAdc, LineSensor
+from alphabot.hardware.line_sensor_module import LineSensor
 
 
 class LineSensorNormalizer(LineSensor):
