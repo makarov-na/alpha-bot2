@@ -19,11 +19,14 @@ class LineFollowerConfig:
         self.SLEEP_TIME = 1 / 1_000_000 * 10
         self.TARGET_VALUE_LEFT = 0
         self.TARGET_VALUE_RIGHT = 0
+        self.black_level = range(0, 21)
+        self.white_level = range(80, 101)
 
 
 class LineFollower:
 
     def __init__(self, config: LineFollowerConfig = LineFollowerConfig(), gpio: GpioWrapper = None):
+        self._cfg = config
         self._sensor: LineSensor = LineSensorNormalizer(LineSensorFilter(LineSensorsAdc(gpio)))
         self._logger = logging.getLogger(__name__)
         self._speed_power = config.SPEED_POWER
@@ -44,6 +47,11 @@ class LineFollower:
             delta_time = self.to_ms(delta_time_ns)
 
             all_sensors_values = self._sensor.readSensors()
+
+            if self._is_on_white(all_sensors_values):
+                self._bot_truck.stop()
+                break
+
             left_sensor_value = all_sensors_values[1]
             right_sensor_value = all_sensors_values[3]
             left_sensor_pid_out = self._left_sensor_pid.getOutput(left_sensor_value, delta_time)
@@ -106,3 +114,9 @@ class LineFollower:
 
     def to_mcs(self, time_ns):
         return time_ns / 1_000
+
+    def _is_on_white(self, all_sensors_values):
+        for value in all_sensors_values:
+            if value not in self._cfg.white_level:
+                return False
+        return True
