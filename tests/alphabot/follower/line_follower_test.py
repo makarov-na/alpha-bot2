@@ -35,7 +35,7 @@ class TestLineFollower(unittest.TestCase):
         sensor_values = [0, 1, 1, 1, 89]
 
         # WHEN
-        result = line_follower._is_on_white(sensor_values)
+        result = line_follower._isBotOutOfline(sensor_values)
 
         # THEN
         self.assertFalse(result)
@@ -46,7 +46,7 @@ class TestLineFollower(unittest.TestCase):
         sensor_values = [90, 90, 90, 100, 100]
 
         # WHEN
-        result = line_follower._is_on_white(sensor_values)
+        result = line_follower._isBotOutOfline(sensor_values)
 
         # THEN
         self.assertTrue(result)
