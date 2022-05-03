@@ -38,30 +38,38 @@ class LineFollower:
         self._bot_truck = Truck(LeftMotor(gpio), RightMotor(gpio))
         self._telemetry = Telemetry()
         self._prevent_time_ns = None
+        self._keep_following = False
 
     def startFollowing(self):
         self._sleepAndMeasureTime()
-        while True:
+        self._keep_following = True
+        while self._keep_following:
             delta_time = self._sleepAndMeasureTime()
             all_sensors_values = self._sensor.readSensors()
+            self._doFollowingAlgorythm(all_sensors_values, delta_time)
+        self._bot_truck.stop()
 
-            if self._isBotOutOfline(all_sensors_values):
-                self._bot_truck.stop()
-                break
+    def _doFollowingAlgorythm(self, all_sensors_values, delta_time):
+        self._correctCourse(all_sensors_values, delta_time)
+        self._sendTelemetry(all_sensors_values, delta_time)
+        self._stopFollowingWhenBotIsOutOfLine(all_sensors_values)
 
-            self._correctCourse(delta_time, all_sensors_values)
-            self._sendTelemetry(all_sensors_values, delta_time)
+    def _stopFollowingWhenBotIsOutOfLine(self, all_sensors_values: List):
+        if self._isBotOutOfLine(all_sensors_values):
+            self._keep_following = False
 
-    def _correctCourse(self, delta_time: float, all_sensors_values: List):
+    def _correctCourse(self, all_sensors_values: List, delta_time):
+        self._bot_truck.setSpeedPower(self._speed_power)
+        self._bot_truck.setTurnPower(self._calculateTurnPower(delta_time, all_sensors_values))
+
+    def _calculateTurnPower(self, delta_time: float, all_sensors_values: List):
         left_sensor_value = all_sensors_values[1]
         right_sensor_value = all_sensors_values[3]
         left_sensor_pid_out = self._left_sensor_pid.getOutput(left_sensor_value, delta_time)
         right_sensor_pid_out = self._right_sensor_pid.getOutput(right_sensor_value, delta_time)
 
-        self._bot_truck.setSpeedPower(self._speed_power)
-
         if left_sensor_pid_out is None or right_sensor_pid_out is None:
-            return
+            return 0
 
         if left_sensor_pid_out < 0 and right_sensor_pid_out < 0:
             if left_sensor_pid_out < right_sensor_pid_out:
@@ -70,33 +78,36 @@ class LineFollower:
                 left_sensor_pid_out = 0
 
         if left_sensor_pid_out < 0:
-            self._bot_truck.setTurnPower(-left_sensor_pid_out)
-            return
+            return -left_sensor_pid_out
 
         if right_sensor_pid_out < 0:
-            self._bot_truck.setTurnPower(right_sensor_pid_out)
-            return
+            return right_sensor_pid_out
 
-        self._bot_truck.setTurnPower(0)
+        return 0
 
     def _sleepAndMeasureTime(self):
         time.sleep(self._sleep_time)
         delta_time_ns = self._calculateDeltaTimeInNanos()
-        return self.to_ms(delta_time_ns)
+        if delta_time_ns is None:
+            return None
+        return self._to_ms(delta_time_ns)
 
     def _calculateDeltaTimeInNanos(self):
         current_time_ns = time.time_ns()
+        if self._prevent_time_ns is None:
+            self._prevent_time_ns = current_time_ns
+            return None
         delta_time_ns = (current_time_ns - self._prevent_time_ns)
         self._prevent_time_ns = current_time_ns
         return delta_time_ns
 
-    def to_ms(self, time_ns):
+    def _to_ms(self, time_ns):
         return time_ns / 1_000_000
 
-    def to_mcs(self, time_ns):
+    def _to_mcs(self, time_ns):
         return time_ns / 1_000
 
-    def _isBotOutOfline(self, all_sensors_values):
+    def _isBotOutOfLine(self, all_sensors_values):
         for value in all_sensors_values:
             if value not in self._cfg.white_level:
                 return False
