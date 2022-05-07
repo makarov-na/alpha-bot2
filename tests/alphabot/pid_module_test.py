@@ -177,7 +177,6 @@ class TestPid(unittest.TestCase):
         output = pid.getOutput(current_value, 200)
 
         # THEN
-        print(pid.getTelemetryData())
         self.assertEqual(output, pid.getTelemetryData()['o'])
         self.assertEqual(target_value - current_value, pid.getTelemetryData()['err'])
 
