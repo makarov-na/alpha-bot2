@@ -109,9 +109,15 @@ class LineFollower:
 
     def _isBotOutOfLine(self, all_sensors_values):
         for value in all_sensors_values:
-            if value not in self._cfg.white_level:
+            if not self._isWhite(value):
                 return False
         return True
+
+    def _isWhite(self, value):
+        return value in self._cfg.white_level
+
+    def _isBlack(self, value):
+        return value in self._cfg.black_level
 
     def _sendTelemetry(self, all_sensors_values, delta_time):
         self._telemetry.send(
