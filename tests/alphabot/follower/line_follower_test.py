@@ -1,7 +1,5 @@
-import unittest
-import time
-
 import asyncio
+import unittest
 from unittest.mock import MagicMock
 
 from alphabot.follower.line_follower_module import LineFollower
@@ -79,21 +77,57 @@ class TestLineFollower(unittest.TestCase):
         loop.run_until_complete(asyncio.gather(startFollowing(), stopFollowing()))
 
         # THEN
-        line_follower._bot_truck.stop.assert_called_once()
+        line_follower._bot_truck.stop.assert_called()
         line_follower._sensor.readSensors.assert_called()
         line_follower._sleepAndMeasureTime.assert_called()
 
     def test_following_algorythm_contain_steps(self):
         # GIVEN
         line_follower = LineFollower(gpio=MagicMock())
+        line_follower._bot_truck = MagicMock()
         line_follower._correctCourse = MagicMock()
         line_follower._sendTelemetry = MagicMock()
+        line_follower._handleRightCorner = MagicMock()
         line_follower._stopFollowingWhenBotIsOutOfLine = MagicMock()
 
         # WHEN
-        line_follower._doFollowingAlgorythm([], 0)
+        line_follower._doFollowingAlgorythm([0, 0, 0, 0, 0], 0)
 
         # THEN
         line_follower._correctCourse.assert_called()
+        line_follower._handleRightCorner.assert_called()
         line_follower._stopFollowingWhenBotIsOutOfLine.assert_called()
         line_follower._sendTelemetry.assert_called()
+
+    def test_is_bot_on_right_corner_left(self):
+        # GIVEN
+        line_follower = LineFollower(gpio=MagicMock())
+        all_sensor_values = [100, 100, 0, 0, 0]
+
+        # WHEN
+        result = line_follower._isBotOnRightCorner(all_sensor_values)
+
+        # THEN
+        self.assertTrue(result)
+
+    def test_is_bot_on_left_corner_right(self):
+        # GIVEN
+        line_follower = LineFollower(gpio=MagicMock())
+        all_sensor_values = [0, 0, 0, 100, 100]
+
+        # WHEN
+        result = line_follower._isBotOnRightCorner(all_sensor_values)
+
+        # THEN
+        self.assertTrue(result)
+
+    def test_is_bot_on_left_corner_false(self):
+        # GIVEN
+        line_follower = LineFollower(gpio=MagicMock())
+        all_sensor_values = [100, 0, 0, 0, 100]
+
+        # WHEN
+        result = line_follower._isBotOnRightCorner(all_sensor_values)
+
+        # THEN
+        self.assertFalse(result)

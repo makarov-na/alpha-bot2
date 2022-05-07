@@ -50,9 +50,20 @@ class LineFollower:
         self._bot_truck.stop()
 
     def _doFollowingAlgorythm(self, all_sensors_values, delta_time):
+
+        self._stopFollowingWhenBotIsOutOfLine(all_sensors_values)
+        self._handleRightCorner(all_sensors_values)
+
         self._correctCourse(all_sensors_values, delta_time)
         self._sendTelemetry(all_sensors_values, delta_time)
-        self._stopFollowingWhenBotIsOutOfLine(all_sensors_values)
+
+    def _handleRightCorner(self, all_sensors_values):
+        if not self._isBotOnRightCorner(all_sensors_values):
+            return
+        self._bot_truck.stop()
+        if self._isBotOnLeftTurn(all_sensors_values):
+            self._bot_truck.turnLeft90()
+        self._bot_truck.turnRight90()
 
     def _stopFollowingWhenBotIsOutOfLine(self, all_sensors_values: List):
         if self._isBotOutOfLine(all_sensors_values):
@@ -118,6 +129,15 @@ class LineFollower:
 
     def _isBlack(self, value):
         return value in self._cfg.black_level
+
+    def _isBotOnRightCorner(self, all_sensors_values):
+        return self._isBotOnRightTurn(all_sensors_values) or self._isBotOnLeftTurn(all_sensors_values)
+
+    def _isBotOnRightTurn(self, all_sensors_values):
+        return self._isBlack(all_sensors_values[2]) and self._isBlack(all_sensors_values[3]) and self._isBlack(all_sensors_values[4])
+
+    def _isBotOnLeftTurn(self, all_sensors_values):
+        return self._isBlack(all_sensors_values[0]) and self._isBlack(all_sensors_values[1]) and self._isBlack(all_sensors_values[2])
 
     def _sendTelemetry(self, all_sensors_values, delta_time):
         self._telemetry.send(

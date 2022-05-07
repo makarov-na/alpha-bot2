@@ -1,8 +1,12 @@
+import time
+
 from alphabot.hardware.motor_module import Motor
 import logging
 
 
 class Truck:
+
+    NINETY_DEGREE_TURN_TIME = 0.5
 
     def __init__(self, left_motor: Motor, right_motor: Motor) -> None:
         self._logger = logging.getLogger(__name__)
@@ -27,6 +31,16 @@ class Truck:
         self._rotation_power = 0
         self._speed_power = 0
         self._sendOutputToMotors()
+
+    def turnLeft90(self):
+        self._rotation_power = -100
+        self._sendOutputToMotors()
+        time.sleep(Truck.NINETY_DEGREE_TURN_TIME)
+
+    def turnRight90(self):
+        self._rotation_power = 100
+        self._sendOutputToMotors()
+        time.sleep(Truck.NINETY_DEGREE_TURN_TIME)
 
     def _sendOutputToMotors(self):
 
