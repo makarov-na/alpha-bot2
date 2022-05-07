@@ -51,13 +51,13 @@ class LineFollower:
 
     def _doFollowingAlgorythm(self, all_sensors_values, delta_time):
 
-        self._stopFollowingWhenBotIsOutOfLine(all_sensors_values)
-        self._handleRightCorner(all_sensors_values)
+        self._handleBotIsOutOfLine(all_sensors_values)
+        self._handleBotIsOnRightCorner(all_sensors_values)
 
         self._correctCourse(all_sensors_values, delta_time)
         self._sendTelemetry(all_sensors_values, delta_time)
 
-    def _handleRightCorner(self, all_sensors_values):
+    def _handleBotIsOnRightCorner(self, all_sensors_values):
         if not self._isBotOnRightCorner(all_sensors_values):
             return
         self._bot_truck.stop()
@@ -65,7 +65,7 @@ class LineFollower:
             self._bot_truck.turnLeft90()
         self._bot_truck.turnRight90()
 
-    def _stopFollowingWhenBotIsOutOfLine(self, all_sensors_values: List):
+    def _handleBotIsOutOfLine(self, all_sensors_values: List):
         if self._isBotOutOfLine(all_sensors_values):
             self._keep_following = False
 
@@ -98,31 +98,22 @@ class LineFollower:
 
     def _sleepAndMeasureTime(self):
         time.sleep(self._sleep_time)
-        delta_time_ns = self._calculateDeltaTimeInNanos()
-        if delta_time_ns is None:
-            return None
-        return self._to_ms(delta_time_ns)
-
-    def _calculateDeltaTimeInNanos(self):
         current_time_ns = time.time_ns()
         if self._prevent_time_ns is None:
             self._prevent_time_ns = current_time_ns
             return None
         delta_time_ns = (current_time_ns - self._prevent_time_ns)
         self._prevent_time_ns = current_time_ns
-        return delta_time_ns
-
-    def _to_ms(self, time_ns):
-        return time_ns / 1_000_000
-
-    def _to_mcs(self, time_ns):
-        return time_ns / 1_000
+        return self._to_ms(delta_time_ns)
 
     def _isBotOutOfLine(self, all_sensors_values):
         for value in all_sensors_values:
             if not self._isWhite(value):
                 return False
         return True
+
+    def _to_ms(self, time_ns):
+        return time_ns / 1_000_000
 
     def _isWhite(self, value):
         return value in self._cfg.white_level

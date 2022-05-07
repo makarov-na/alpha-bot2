@@ -87,16 +87,16 @@ class TestLineFollower(unittest.TestCase):
         line_follower._bot_truck = MagicMock()
         line_follower._correctCourse = MagicMock()
         line_follower._sendTelemetry = MagicMock()
-        line_follower._handleRightCorner = MagicMock()
-        line_follower._stopFollowingWhenBotIsOutOfLine = MagicMock()
+        line_follower._handleBotIsOnRightCorner = MagicMock()
+        line_follower._handleBotIsOutOfLine = MagicMock()
 
         # WHEN
         line_follower._doFollowingAlgorythm([0, 0, 0, 0, 0], 0)
 
         # THEN
         line_follower._correctCourse.assert_called()
-        line_follower._handleRightCorner.assert_called()
-        line_follower._stopFollowingWhenBotIsOutOfLine.assert_called()
+        line_follower._handleBotIsOnRightCorner.assert_called()
+        line_follower._handleBotIsOutOfLine.assert_called()
         line_follower._sendTelemetry.assert_called()
 
     def test_is_bot_on_right_corner_left(self):
