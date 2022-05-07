@@ -20,7 +20,7 @@ class TestLineSensorFilter(unittest.TestCase):
         sensor_values = line_sensor_filter.readSensors()
 
         # THEN
-        self.assertEquals(test_values, sensor_values)
+        self.assertEqual(test_values, sensor_values)
 
 
 class TestAvgFilter(unittest.TestCase):

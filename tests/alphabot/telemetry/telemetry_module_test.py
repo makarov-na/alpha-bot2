@@ -30,7 +30,9 @@ class TestTelemetry(unittest.TestCase):
 
         # THEN
         self.assertTrue(os.path.exists(telemetry._full_file_name))
-        self.assertTrue(3, len(open(telemetry._full_file_name).readlines()))
+        file = open(telemetry._full_file_name)
+        self.assertTrue(3, len(file.readlines()))
+        file.close()
 
 
 if __name__ == '__main__':
