@@ -6,6 +6,23 @@ import numpy as np
 from alphabot.hardware.line_sensor_module import LineSensor
 
 
+class LineSensorSoft(LineSensor):
+
+    def __init__(self, line_sensor_hard: LineSensor):
+        self.black_level = range(0, 21)
+        self.white_level = range(80, 101)
+        self._sensor: LineSensor = LineSensorNormalizer(LineSensorFilter(line_sensor_hard))
+
+    def readSensors(self) -> List:
+        return self._sensor.readSensors()
+
+    def isSensorOnWhite(self, value):
+        return value in self.white_level
+
+    def isSensorOnBlack(self, value):
+        return value in self.black_level
+
+
 class LineSensorNormalizer(LineSensor):
 
     def __init__(self, sensors_adc: LineSensor, min_values: list = None, max_values: list = None):

@@ -1,14 +1,14 @@
+import logging
+import time
 from typing import List
 
-from alphabot.follower.line_sensor_module import LineSensorNormalizer, LineSensorFilter
+from alphabot.follower.line_sensor_module import LineSensor, LineSensorSoft
 from alphabot.hardware.gpio_module import GpioWrapper
-from alphabot.hardware.line_sensor_module import LineSensorsAdc, LineSensor
+from alphabot.hardware.line_sensor_module import LineSensorsAdc
 from alphabot.hardware.motor_module import LeftMotor, RightMotor
 from alphabot.pid_module import PidController
 from alphabot.telemetry.telemetry_module import Telemetry
 from alphabot.truck_module import Truck
-import time
-import logging
 
 
 class LineFollowerConfig:
@@ -21,15 +21,13 @@ class LineFollowerConfig:
         self.SLEEP_TIME = 1 / 1_000_000 * 10
         self.TARGET_VALUE_LEFT = 0
         self.TARGET_VALUE_RIGHT = 0
-        self.black_level = range(0, 21)
-        self.white_level = range(80, 101)
 
 
 class LineFollower:
 
     def __init__(self, config: LineFollowerConfig = LineFollowerConfig(), gpio: GpioWrapper = None):
         self._cfg = config
-        self._sensor: LineSensor = LineSensorNormalizer(LineSensorFilter(LineSensorsAdc(gpio)))
+        self._sensor = LineSensorSoft(LineSensorsAdc(gpio))
         self._logger = logging.getLogger(__name__)
         self._speed_power = config.SPEED_POWER
         self._sleep_time = config.SLEEP_TIME
@@ -113,27 +111,21 @@ class LineFollower:
 
     def _isBotOutOfLine(self, all_sensors_values):
         for value in all_sensors_values:
-            if not self._isWhite(value):
+            if not self._sensor.isSensorOnWhite(value):
                 return False
         return True
 
     def _to_ms(self, time_ns):
         return time_ns / 1_000_000
 
-    def _isWhite(self, value):
-        return value in self._cfg.white_level
-
-    def _isBlack(self, value):
-        return value in self._cfg.black_level
-
     def _isBotOnRightCorner(self, all_sensors_values):
         return self._isBotOnRightTurn(all_sensors_values) or self._isBotOnLeftTurn(all_sensors_values)
 
     def _isBotOnRightTurn(self, all_sensors_values):
-        return self._isBlack(all_sensors_values[2]) and self._isBlack(all_sensors_values[3]) and self._isBlack(all_sensors_values[4])
+        return self._sensor.isSensorOnBlack(all_sensors_values[2]) and self._sensor.isSensorOnBlack(all_sensors_values[3]) and self._sensor.isSensorOnBlack(all_sensors_values[4])
 
     def _isBotOnLeftTurn(self, all_sensors_values):
-        return self._isBlack(all_sensors_values[0]) and self._isBlack(all_sensors_values[1]) and self._isBlack(all_sensors_values[2])
+        return self._sensor.isSensorOnBlack(all_sensors_values[0]) and self._sensor.isSensorOnBlack(all_sensors_values[1]) and self._sensor.isSensorOnBlack(all_sensors_values[2])
 
     def _sendTelemetry(self, all_sensors_values, delta_time):
         self._telemetry.send(
