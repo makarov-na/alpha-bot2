@@ -1,8 +1,8 @@
 import unittest
-import logging
 from unittest.mock import MagicMock
 
 from alphabot.truck_module import Truck
+
 
 #logging.basicConfig(level=logging.INFO)
 
