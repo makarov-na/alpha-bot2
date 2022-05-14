@@ -5,8 +5,10 @@ import logging
 
 
 class Truck:
-
-    NINETY_DEGREE_TURN_TIME = 0.5
+    # TODO Values must be calculated in calibration process
+    NINETY_DEGREE_RIGHT_TURN_TIME = 0.3
+    NINETY_DEGREE_LEFT_TURN_TIME = 0.35
+    NINETY_DEGREE_TURN_POWER = 50
 
     def __init__(self, left_motor: Motor, right_motor: Motor) -> None:
         self._logger = logging.getLogger(__name__)
@@ -33,14 +35,16 @@ class Truck:
         self._sendOutputToMotors()
 
     def turnLeft90(self):
-        self._rotation_power = -100
+        self._rotation_power = -Truck.NINETY_DEGREE_TURN_POWER
         self._sendOutputToMotors()
-        time.sleep(Truck.NINETY_DEGREE_TURN_TIME)
+        time.sleep(Truck.NINETY_DEGREE_LEFT_TURN_TIME)
+        self._rotation_power = 0
 
     def turnRight90(self):
-        self._rotation_power = 100
+        self._rotation_power = Truck.NINETY_DEGREE_TURN_POWER
         self._sendOutputToMotors()
-        time.sleep(Truck.NINETY_DEGREE_TURN_TIME)
+        time.sleep(Truck.NINETY_DEGREE_RIGHT_TURN_TIME)
+        self._rotation_power = 0
 
     def _sendOutputToMotors(self):
 
