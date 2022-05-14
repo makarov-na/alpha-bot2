@@ -1,4 +1,5 @@
 import asyncio
+import time
 import unittest
 from unittest.mock import MagicMock
 
@@ -6,6 +7,10 @@ from alphabot.follower.line_follower_module import LineFollower
 
 
 class TestLineFollower(unittest.TestCase):
+
+    def setUp(self) -> None:
+        time.sleep = MagicMock()
+        return
 
     def test_calculate_delta_time_ms_one_second(self):
         # GIVEN
@@ -58,7 +63,6 @@ class TestLineFollower(unittest.TestCase):
         line_follower._bot_truck.stop = MagicMock()
         line_follower._sleepAndMeasureTime = MagicMock()
         line_follower._sleepAndMeasureTime.return_value = 11
-        line_follower._sensor = MagicMock()
         line_follower._sensor.readSensors = MagicMock()
         line_follower._sensor.readSensors.return_value = [1, 2, 3, 4, 5]
         loop = asyncio.get_event_loop()
