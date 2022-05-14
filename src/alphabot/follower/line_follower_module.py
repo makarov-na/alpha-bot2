@@ -60,10 +60,15 @@ class LineFollower:
     def _handleBotIsOnRightCorner(self, all_sensors_values):
         if not self._isBotOnRightCorner(all_sensors_values):
             return
+        # TODO replace for more common algorithm without timings
+        time.sleep(0.1)
         self._bot_truck.stop()
         if self._isBotOnLeftTurn(all_sensors_values):
             self._bot_truck.turnLeft90()
-        self._bot_truck.turnRight90()
+        else:
+            self._bot_truck.turnRight90()
+        self._bot_truck.setSpeedPower(20)
+        time.sleep(0.05)
 
     def _handleBotIsOutOfLine(self, all_sensors_values: List):
         if self._isBotOutOfLine(all_sensors_values):
