@@ -103,51 +103,18 @@ class TestLineFollower(unittest.TestCase):
         line_follower._handleBotIsOutOfLine.assert_called()
         line_follower._sendTelemetry.assert_called()
 
-    def test_is_bot_on_right_corner_left(self):
-        # GIVEN
-        line_follower = LineFollower(gpio=MagicMock())
-        all_sensor_values = [100, 100, 0, 0, 0]
-
-        # WHEN
-        result = line_follower._isBotOnRightCorner(all_sensor_values)
-
-        # THEN
-        self.assertTrue(result)
-
-    def test_is_bot_on_left_corner_right(self):
-        # GIVEN
-        line_follower = LineFollower(gpio=MagicMock())
-        all_sensor_values = [0, 0, 0, 100, 100]
-
-        # WHEN
-        result = line_follower._isBotOnRightCorner(all_sensor_values)
-
-        # THEN
-        self.assertTrue(result)
-
-    def test_is_bot_on_left_corner_false(self):
-        # GIVEN
-        line_follower = LineFollower(gpio=MagicMock())
-        all_sensor_values = [100, 0, 0, 0, 100]
-
-        # WHEN
-        result = line_follower._isBotOnRightCorner(all_sensor_values)
-
-        # THEN
-        self.assertFalse(result)
-
     def test_handle_bot_on_right_corner_left(self):
         # GIVEN
         line_follower = LineFollower(gpio=MagicMock())
-        line_follower._isBotOnRightCorner = MagicMock()
-        line_follower._isBotOnRightCorner = MagicMock()
         line_follower._bot_truck = MagicMock()
         line_follower._bot_truck.turnLeft90 = MagicMock()
         line_follower._bot_truck.turnRight90 = MagicMock()
-        all_sensor_values = [0, 0, 0, 100, 100]
+        all_sensor_values = [[50, 0, 0, 0, 100], [50, 0, 0, 0, 100], [0, 0, 0, 0, 100]]
 
         # WHEN
-        line_follower._handleBotIsOnRightCorner(all_sensor_values)
+        line_follower._handleBotIsOnRightCorner(all_sensor_values[0])
+        line_follower._handleBotIsOnRightCorner(all_sensor_values[1])
+        line_follower._handleBotIsOnRightCorner(all_sensor_values[2])
 
         # THEN
         line_follower._bot_truck.turnLeft90.assert_called_once()
@@ -156,15 +123,15 @@ class TestLineFollower(unittest.TestCase):
     def test_handle_bot_on_right_corner_right(self):
         # GIVEN
         line_follower = LineFollower(gpio=MagicMock())
-        line_follower._isBotOnRightCorner = MagicMock()
-        line_follower._isBotOnRightCorner = MagicMock()
         line_follower._bot_truck = MagicMock()
         line_follower._bot_truck.turnLeft90 = MagicMock()
         line_follower._bot_truck.turnRight90 = MagicMock()
-        all_sensor_values = [100, 100, 0, 0, 0]
+        all_sensor_values = [[100, 0, 0, 0, 50], [100, 0, 0, 0, 50], [100, 0, 0, 0, 0]]
 
         # WHEN
-        line_follower._handleBotIsOnRightCorner(all_sensor_values)
+        line_follower._handleBotIsOnRightCorner(all_sensor_values[0])
+        line_follower._handleBotIsOnRightCorner(all_sensor_values[1])
+        line_follower._handleBotIsOnRightCorner(all_sensor_values[2])
 
         # THEN
         line_follower._bot_truck.turnRight90.assert_called_once()

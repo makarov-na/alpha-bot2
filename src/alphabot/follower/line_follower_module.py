@@ -2,7 +2,7 @@ import logging
 import time
 from typing import List
 
-from alphabot.follower.angle_detector import LeftTurnRightAngleDetector, RightTurnRightAngleDetector
+from alphabot.follower.angle_detector import RightAngleDetector
 from alphabot.follower.line_sensor_module import LineSensorSoft
 from alphabot.hardware.gpio_module import GpioWrapper
 from alphabot.hardware.line_sensor_module import LineSensorsAdc
@@ -29,8 +29,7 @@ class LineFollower:
     def __init__(self, config: LineFollowerConfig = LineFollowerConfig(), gpio: GpioWrapper = None):
         self._cfg = config
         self._sensor = LineSensorSoft(LineSensorsAdc(gpio))
-        self._left_turn_detector = LeftTurnRightAngleDetector(self._sensor)
-        self._right_turn_detector = RightTurnRightAngleDetector(self._sensor)
+        self._turn_detector = RightAngleDetector(self._sensor)
         self._logger = logging.getLogger(__name__)
         self._speed_power = config.SPEED_POWER
         self._sleep_time = config.SLEEP_TIME
@@ -59,12 +58,13 @@ class LineFollower:
         self._sendTelemetry(all_sensors_values, delta_time)
 
     def _handleBotIsOnRightCorner(self, all_sensors_values):
-        if not self._isBotOnRightCorner(all_sensors_values):
+        self._turn_detector.appendSensorValues(all_sensors_values)
+        if not self._turn_detector.isOnRightCorner():
             return
         # TODO replace for more common algorithm without timings
         time.sleep(0.1)
         self._bot_truck.stop()
-        if self._left_turn_detector.isBotOnLeftTurn(all_sensors_values):
+        if self._turn_detector.isBotOnLeftTurn():
             self._bot_truck.turnLeft90()
         else:
             self._bot_truck.turnRight90()
@@ -120,9 +120,6 @@ class LineFollower:
 
     def _to_ms(self, time_ns):
         return time_ns / 1_000_000
-
-    def _isBotOnRightCorner(self, all_sensors_values):
-        return self._right_turn_detector.isBotOnRightTurn(all_sensors_values) or self._left_turn_detector.isBotOnLeftTurn(all_sensors_values)
 
     def _sendTelemetry(self, all_sensors_values, delta_time):
         self._telemetry.send(

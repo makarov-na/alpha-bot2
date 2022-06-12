@@ -1,20 +1,49 @@
+from enum import Enum
+from collections import deque
+
 from alphabot.follower.line_sensor_module import LineSensorSoft
 
 
-class LeftTurnRightAngleDetector:
+class SensorStatus(Enum):
+    BLACK = 'X'
+    WHITE = '_'
+    MIDDLE = '|'
+
+
+class RightAngleDetector:
 
     def __init__(self, line_sensor: LineSensorSoft) -> None:
         self._sensor = line_sensor
+        self._left_turn_pattern = [[SensorStatus.MIDDLE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.WHITE],
+                                   [SensorStatus.MIDDLE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.WHITE],
+                                   [SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.WHITE]]
+        self._right_turn_pattern = [[SensorStatus.WHITE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.MIDDLE],
+                                    [SensorStatus.WHITE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.MIDDLE],
+                                    [SensorStatus.WHITE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK]]
+        self._current_state = deque(maxlen=3)
 
-    def isBotOnLeftTurn(self, all_sensors_values):
-        return self._sensor.isSensorOnBlack(all_sensors_values[0]) and self._sensor.isSensorOnBlack(all_sensors_values[1]) and self._sensor.isSensorOnBlack(all_sensors_values[2])
+    def appendSensorValues(self, all_sensors_values):
+        current_line = []
+        for curr_value in all_sensors_values:
+            current_line.append(self._getStatus(curr_value))
+        self._current_state.append(current_line)
 
+    def isBotOnLeftTurn(self):
+        if self._left_turn_pattern == list(self._current_state):
+            return True
+        return False
 
-class RightTurnRightAngleDetector:
+    def isBotOnRightTurn(self):
+        if self._right_turn_pattern == list(self._current_state):
+            return True
+        return False
 
-    def __init__(self, line_sensor: LineSensorSoft) -> None:
-        self._sensor = line_sensor
+    def isOnRightCorner(self):
+        return self.isBotOnRightTurn() or self.isBotOnLeftTurn()
 
-    def isBotOnRightTurn(self, all_sensors_values):
-        return self._sensor.isSensorOnBlack(all_sensors_values[2]) and self._sensor.isSensorOnBlack(all_sensors_values[3]) and self._sensor.isSensorOnBlack(all_sensors_values[4])
-
+    def _getStatus(self, curr_value):
+        if self._sensor.isSensorOnBlack(curr_value):
+            return SensorStatus.BLACK
+        if self._sensor.isSensorOnWhite(curr_value):
+            return SensorStatus.WHITE
+        return SensorStatus.MIDDLE
