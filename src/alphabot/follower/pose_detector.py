@@ -10,10 +10,11 @@ class SensorStatus(Enum):
     MIDDLE = '|'
 
 
-class RightAngleDetector:
+class PoseDetector:
 
     def __init__(self, line_sensor: LineSensorSoft) -> None:
         self._sensor = line_sensor
+
         self._left_turn_pattern = [[SensorStatus.MIDDLE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.WHITE],
                                    [SensorStatus.MIDDLE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.WHITE],
                                    [SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.WHITE]]
@@ -40,6 +41,28 @@ class RightAngleDetector:
 
     def isOnRightCorner(self):
         return self.isBotOnRightTurn() or self.isBotOnLeftTurn()
+
+    def isBotOutOfLine(self):
+        if len(list(self._current_state)) == 0:
+            return None
+        for sensor in list(self._current_state)[len(list(self._current_state)) - 1]:
+            if sensor != SensorStatus.WHITE:
+                return False
+        return True
+
+    def isBotPartlyOnLine(self):
+        if len(list(self._current_state)) == 0:
+            return None
+        for sensor in list(self._current_state)[len(list(self._current_state)) - 1]:
+            if sensor in [SensorStatus.BLACK, SensorStatus.MIDDLE]:
+                return True
+        return False
+
+    def isBotExactlyOnLine(self):
+        if len(list(self._current_state)) == 0:
+            return None
+        last_sensors = list(self._current_state)[len(list(self._current_state)) - 1]
+        return last_sensors[0] == SensorStatus.WHITE and last_sensors[4] == SensorStatus.WHITE and last_sensors[2] == SensorStatus.BLACK
 
     def _getStatus(self, curr_value):
         if self._sensor.isSensorOnBlack(curr_value):

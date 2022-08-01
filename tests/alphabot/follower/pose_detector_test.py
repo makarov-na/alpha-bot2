@@ -2,7 +2,7 @@ import time
 import unittest
 from unittest.mock import MagicMock
 
-from alphabot.follower.angle_detector import RightAngleDetector
+from alphabot.follower.pose_detector import PoseDetector
 from alphabot.follower.line_sensor_module import LineSensorSoft
 
 
@@ -14,7 +14,7 @@ class TestAngleDetector(unittest.TestCase):
 
     def test_bot_on_left_turn_true(self):
         # GIVEN
-        angle_detector = RightAngleDetector(LineSensorSoft(MagicMock()))
+        angle_detector = PoseDetector(LineSensorSoft(MagicMock()))
         all_sensor_values = [[50, 0, 0, 0, 100], [50, 0, 0, 0, 100], [0, 0, 0, 0, 100]]
 
         # WHEN
@@ -34,7 +34,7 @@ class TestAngleDetector(unittest.TestCase):
 
     def test_bot_on_left_turn_false_multiple(self):
         # GIVEN
-        angle_detector = RightAngleDetector(LineSensorSoft(MagicMock()))
+        angle_detector = PoseDetector(LineSensorSoft(MagicMock()))
         all_sensor_values = [[50, 0, 0, 0, 100], [50, 0, 100, 0, 100], [0, 0, 0, 0, 100]]
 
         # WHEN
@@ -52,7 +52,7 @@ class TestAngleDetector(unittest.TestCase):
 
     def test_bot_on_left_turn_false(self):
         # GIVEN
-        angle_detector = RightAngleDetector(LineSensorSoft(MagicMock()))
+        angle_detector = PoseDetector(LineSensorSoft(MagicMock()))
         all_sensor_values = [[50, 0, 0, 0, 100], [50, 0, 0, 0, 100], [0, 0, 0, 0, 100]]
 
         # WHEN

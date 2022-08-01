@@ -38,9 +38,10 @@ class TestLineFollower(unittest.TestCase):
         # GIVEN
         line_follower = LineFollower(gpio=MagicMock())
         sensor_values = [0, 1, 1, 1, 89]
+        line_follower._pose_detector.appendSensorValues(sensor_values)
 
         # WHEN
-        result = line_follower._isBotOutOfLine(sensor_values)
+        result = line_follower._isBotOutOfLine()
 
         # THEN
         self.assertFalse(result)
@@ -49,9 +50,10 @@ class TestLineFollower(unittest.TestCase):
         # GIVEN
         line_follower = LineFollower(gpio=MagicMock())
         sensor_values = [90, 90, 90, 100, 100]
+        line_follower._doFollowingAlgorythm(sensor_values, 0)
 
         # WHEN
-        result = line_follower._isBotOutOfLine(sensor_values)
+        result = line_follower._isBotOutOfLine()
 
         # THEN
         self.assertTrue(result)
@@ -85,7 +87,7 @@ class TestLineFollower(unittest.TestCase):
         line_follower._sensor.readSensors.assert_called()
         line_follower._sleepAndMeasureTime.assert_called()
 
-    def test_following_algorythm_contain_steps(self):
+    def test_following_algorythm_contain_step_correct_course(self):
         # GIVEN
         line_follower = LineFollower(gpio=MagicMock())
         line_follower._bot_truck = MagicMock()
@@ -95,11 +97,47 @@ class TestLineFollower(unittest.TestCase):
         line_follower._handleBotIsOutOfLine = MagicMock()
 
         # WHEN
-        line_follower._doFollowingAlgorythm([0, 0, 0, 0, 0], 0)
+        line_follower._doFollowingAlgorythm([100, 0, 0, 0, 100], 0)
 
         # THEN
         line_follower._correctCourse.assert_called()
+        line_follower._handleBotIsOnRightCorner.assert_not_called()
+        line_follower._handleBotIsOutOfLine.assert_not_called()
+        line_follower._sendTelemetry.assert_called()
+
+    def test_following_algorythm_contain_step_correct_angle(self):
+        # GIVEN
+        line_follower = LineFollower(gpio=MagicMock())
+        line_follower._bot_truck = MagicMock()
+        line_follower._correctCourse = MagicMock()
+        line_follower._sendTelemetry = MagicMock()
+        line_follower._handleBotIsOnRightCorner = MagicMock()
+        line_follower._handleBotIsOutOfLine = MagicMock()
+
+        # WHEN
+        line_follower._doFollowingAlgorythm([0, 0, 0, 0, 100], 0)
+
+        # THEN
+        line_follower._correctCourse.assert_not_called()
         line_follower._handleBotIsOnRightCorner.assert_called()
+        line_follower._handleBotIsOutOfLine.assert_not_called()
+        line_follower._sendTelemetry.assert_called()
+
+    def test_following_algorythm_contain_step_out_of_line(self):
+        # GIVEN
+        line_follower = LineFollower(gpio=MagicMock())
+        line_follower._bot_truck = MagicMock()
+        line_follower._correctCourse = MagicMock()
+        line_follower._sendTelemetry = MagicMock()
+        line_follower._handleBotIsOnRightCorner = MagicMock()
+        line_follower._handleBotIsOutOfLine = MagicMock()
+
+        # WHEN
+        line_follower._doFollowingAlgorythm([100, 100, 100, 100, 100], 0)
+
+        # THEN
+        line_follower._correctCourse.assert_not_called()
+        line_follower._handleBotIsOnRightCorner.assert_not_called()
         line_follower._handleBotIsOutOfLine.assert_called()
         line_follower._sendTelemetry.assert_called()
 
@@ -112,9 +150,9 @@ class TestLineFollower(unittest.TestCase):
         all_sensor_values = [[50, 0, 0, 0, 100], [50, 0, 0, 0, 100], [0, 0, 0, 0, 100]]
 
         # WHEN
-        line_follower._handleBotIsOnRightCorner(all_sensor_values[0])
-        line_follower._handleBotIsOnRightCorner(all_sensor_values[1])
-        line_follower._handleBotIsOnRightCorner(all_sensor_values[2])
+        line_follower._doFollowingAlgorythm(all_sensor_values[0], 0)
+        line_follower._doFollowingAlgorythm(all_sensor_values[1], 0)
+        line_follower._doFollowingAlgorythm(all_sensor_values[2], 0)
 
         # THEN
         line_follower._bot_truck.turnLeft90.assert_called_once()
@@ -129,10 +167,22 @@ class TestLineFollower(unittest.TestCase):
         all_sensor_values = [[100, 0, 0, 0, 50], [100, 0, 0, 0, 50], [100, 0, 0, 0, 0]]
 
         # WHEN
-        line_follower._handleBotIsOnRightCorner(all_sensor_values[0])
-        line_follower._handleBotIsOnRightCorner(all_sensor_values[1])
-        line_follower._handleBotIsOnRightCorner(all_sensor_values[2])
+        line_follower._doFollowingAlgorythm(all_sensor_values[0], 0)
+        line_follower._doFollowingAlgorythm(all_sensor_values[1], 0)
+        line_follower._doFollowingAlgorythm(all_sensor_values[2], 0)
 
         # THEN
         line_follower._bot_truck.turnRight90.assert_called_once()
         line_follower._bot_truck.turnLeft90.assert_not_called()
+
+    def test_is_bot_exactly_on_line(self):
+        # GIVEN
+        line_follower = LineFollower(gpio=MagicMock())
+        all_sensor_values = [100, 0, 0, 0, 100]
+        line_follower._pose_detector.appendSensorValues(all_sensor_values)
+
+        # WHEN
+        result = line_follower._isBotExactlyOnLine()
+
+        # THEN
+        # self.assertTrue(result)
