@@ -34,30 +34,6 @@ class TestLineFollower(unittest.TestCase):
         # THEN
         self.assertEqual(0.154, time_ms)
 
-    def test_bot_is_not_out_of_line_when_not_all_on_white(self):
-        # GIVEN
-        line_follower = LineFollower(gpio=MagicMock())
-        sensor_values = [0, 1, 1, 1, 89]
-        line_follower._pose_detector.appendSensorValues(sensor_values)
-
-        # WHEN
-        result = line_follower._isBotOutOfLine()
-
-        # THEN
-        self.assertFalse(result)
-
-    def test_bot_is_out_of_line_when_all_on_white(self):
-        # GIVEN
-        line_follower = LineFollower(gpio=MagicMock())
-        sensor_values = [90, 90, 90, 100, 100]
-        line_follower._doFollowingAlgorythm(sensor_values, 0)
-
-        # WHEN
-        result = line_follower._isBotOutOfLine()
-
-        # THEN
-        self.assertTrue(result)
-
     def test_start_following_loop_and_exit_from_loop(self):
         # GIVEN
         line_follower = LineFollower(gpio=MagicMock())
@@ -174,15 +150,3 @@ class TestLineFollower(unittest.TestCase):
         # THEN
         line_follower._bot_truck.turnRight90.assert_called_once()
         line_follower._bot_truck.turnLeft90.assert_not_called()
-
-    def test_is_bot_exactly_on_line(self):
-        # GIVEN
-        line_follower = LineFollower(gpio=MagicMock())
-        all_sensor_values = [100, 0, 0, 0, 100]
-        line_follower._pose_detector.appendSensorValues(all_sensor_values)
-
-        # WHEN
-        result = line_follower._isBotExactlyOnLine()
-
-        # THEN
-        # self.assertTrue(result)

@@ -61,3 +61,39 @@ class TestAngleDetector(unittest.TestCase):
 
         # THEN
         self.assertFalse(result2)
+
+    def test_bot_is_not_out_of_line_when_not_all_on_white(self):
+        # GIVEN
+        pose_detector = PoseDetector(LineSensorSoft(MagicMock()))
+        sensor_values = [0, 1, 1, 1, 89]
+        pose_detector.appendSensorValues(sensor_values)
+
+        # WHEN
+        result = pose_detector.isBotOutOfLine()
+
+        # THEN
+        self.assertFalse(result)
+
+    def test_bot_is_out_of_line_when_all_on_white(self):
+        # GIVEN
+        pose_detector = PoseDetector(LineSensorSoft(MagicMock()))
+        sensor_values = [90, 90, 90, 100, 100]
+        pose_detector.appendSensorValues(sensor_values)
+
+        # WHEN
+        result = pose_detector.isBotOutOfLine()
+
+        # THEN
+        self.assertTrue(result)
+
+    def test_is_bot_exactly_on_line(self):
+        # GIVEN
+        pose_detector = PoseDetector(LineSensorSoft(MagicMock()))
+        all_sensor_values = [100, 0, 0, 0, 100]
+        pose_detector.appendSensorValues(all_sensor_values)
+
+        # WHEN
+        result = pose_detector.isBotExactlyOnLine()
+
+        # THEN
+        self.assertTrue(result)
