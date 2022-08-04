@@ -46,10 +46,12 @@ class LineFollower:
         while self._keep_following:
             delta_time = self._sleepAndMeasureTime()
             all_sensors_values = self._sensor.readSensors()
-            self._doFollowingAlgorythm(all_sensors_values, delta_time)
+            self._doFollowingAlgorithm(all_sensors_values, delta_time)
+            self._sendTelemetry(all_sensors_values, delta_time)
+
         self._bot_truck.stop()
 
-    def _doFollowingAlgorythm(self, all_sensors_values, delta_time):
+    def _doFollowingAlgorithm(self, all_sensors_values, delta_time):
         self._pose_detector.appendSensorValues(all_sensors_values)
         if self._pose_detector.isBotExactlyOnLine():
             self._correctCourse(all_sensors_values, delta_time)
@@ -57,7 +59,7 @@ class LineFollower:
             self._handleBotIsOnRightCorner()
         elif self._pose_detector.isBotOutOfLine():
             self._handleBotIsOutOfLine()
-        self._sendTelemetry(all_sensors_values, delta_time)
+
 
     def _handleBotIsOnRightCorner(self):
         if not self._pose_detector.isOnRightCorner():
