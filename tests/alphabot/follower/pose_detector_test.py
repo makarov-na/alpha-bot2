@@ -2,7 +2,7 @@ import time
 import unittest
 from unittest.mock import MagicMock
 
-from alphabot.follower.pose_detector import PoseDetector
+from alphabot.follower.pose_detector_module import PoseDetector
 from alphabot.follower.line_sensor_module import LineSensorSoft
 
 
