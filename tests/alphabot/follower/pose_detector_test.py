@@ -14,7 +14,7 @@ class TestAngleDetector(unittest.TestCase):
 
     def test_bot_on_left_turn_true(self):
         # GIVEN
-        angle_detector = PoseDetector(LineSensorSoft(MagicMock()))
+        angle_detector = PoseDetector()
         all_sensor_values = [[50, 0, 0, 0, 100], [50, 0, 0, 0, 100], [0, 0, 0, 0, 100]]
 
         # WHEN
@@ -34,7 +34,7 @@ class TestAngleDetector(unittest.TestCase):
 
     def test_bot_on_left_turn_false_multiple(self):
         # GIVEN
-        angle_detector = PoseDetector(LineSensorSoft(MagicMock()))
+        angle_detector = PoseDetector()
         all_sensor_values = [[50, 0, 0, 0, 100], [50, 0, 100, 0, 100], [0, 0, 0, 0, 100]]
 
         # WHEN
@@ -52,7 +52,7 @@ class TestAngleDetector(unittest.TestCase):
 
     def test_bot_on_left_turn_false(self):
         # GIVEN
-        angle_detector = PoseDetector(LineSensorSoft(MagicMock()))
+        angle_detector = PoseDetector()
         all_sensor_values = [[50, 0, 0, 0, 100], [50, 0, 0, 0, 100], [0, 0, 0, 0, 100]]
 
         # WHEN
@@ -64,7 +64,7 @@ class TestAngleDetector(unittest.TestCase):
 
     def test_bot_is_not_out_of_line_when_not_all_on_white(self):
         # GIVEN
-        pose_detector = PoseDetector(LineSensorSoft(MagicMock()))
+        pose_detector = PoseDetector()
         sensor_values = [0, 1, 1, 1, 89]
         pose_detector.appendSensorValues(sensor_values)
 
@@ -76,7 +76,7 @@ class TestAngleDetector(unittest.TestCase):
 
     def test_bot_is_out_of_line_when_all_on_white(self):
         # GIVEN
-        pose_detector = PoseDetector(LineSensorSoft(MagicMock()))
+        pose_detector = PoseDetector()
         sensor_values = [90, 90, 90, 100, 100]
         pose_detector.appendSensorValues(sensor_values)
 
@@ -88,7 +88,7 @@ class TestAngleDetector(unittest.TestCase):
 
     def test_is_bot_exactly_on_line(self):
         # GIVEN
-        pose_detector = PoseDetector(LineSensorSoft(MagicMock()))
+        pose_detector = PoseDetector()
         all_sensor_values = [100, 0, 0, 0, 100]
         pose_detector.appendSensorValues(all_sensor_values)
 

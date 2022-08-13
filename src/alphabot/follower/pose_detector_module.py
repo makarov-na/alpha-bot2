@@ -1,7 +1,7 @@
-from enum import Enum
 from collections import deque
+from enum import Enum
 
-from alphabot.follower.line_sensor_module import LineSensorSoft
+from alphabot.follower.line_sensor_module import LineSensorLevel
 
 
 class SensorStatus(Enum):
@@ -12,8 +12,9 @@ class SensorStatus(Enum):
 
 class PoseDetector:
 
-    def __init__(self, line_sensor: LineSensorSoft) -> None:
-        self._sensor = line_sensor
+    def __init__(self) -> None:
+
+        self._sensor_level = LineSensorLevel()
 
         self._left_turn_pattern = [[SensorStatus.MIDDLE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.WHITE],
                                    [SensorStatus.MIDDLE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.WHITE],
@@ -65,8 +66,8 @@ class PoseDetector:
         return last_sensors[0] == SensorStatus.WHITE and last_sensors[4] == SensorStatus.WHITE and last_sensors[2] == SensorStatus.BLACK
 
     def _getStatus(self, curr_value):
-        if self._sensor.isSensorOnBlack(curr_value):
+        if self._sensor_level.isSensorOnBlack(curr_value):
             return SensorStatus.BLACK
-        if self._sensor.isSensorOnWhite(curr_value):
+        if self._sensor_level.isSensorOnWhite(curr_value):
             return SensorStatus.WHITE
         return SensorStatus.MIDDLE

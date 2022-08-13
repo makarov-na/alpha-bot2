@@ -28,10 +28,9 @@ class LineFollower:
 
     def __init__(self, config: LineFollowerConfig = LineFollowerConfig(), gpio: GpioWrapper = None):
         self._cfg = config
-        self._pid_turn_power_calculator = PidTurnPowerCalculator(config.KP, config.KI, config.KD, config.TARGET_VALUE_LEFT, config.TARGET_VALUE_RIGHT, config.MAX_OUT)
         self._bot_truck = Truck(LeftMotor(gpio), RightMotor(gpio))
         self._sensor = LineSensorSoft(LineSensorsAdc(gpio))
-        self._pose_detector = PoseDetector(self._sensor)
+        self._line_following_algorithm = LineFollowingAlgorithm(self._bot_truck, config)
         self._logger = logging.getLogger(__name__)
         self._telemetry = Telemetry()
         self._speed_power = config.SPEED_POWER
@@ -42,42 +41,12 @@ class LineFollower:
     def startFollowing(self):
         self._sleepAndMeasureTime()
         self._keep_following = True
-        while self._keep_following:
+        while self._line_following_algorithm.hasNextStep():
             delta_time = self._sleepAndMeasureTime()
             all_sensors_values = self._sensor.readSensors()
-            self._doFollowingAlgorithm(all_sensors_values, delta_time)
+            self._line_following_algorithm.doFollowingAlgorithm(all_sensors_values, delta_time)
             self._sendTelemetry(all_sensors_values, delta_time)
         self._bot_truck.stop()
-
-    def _doFollowingAlgorithm(self, all_sensors_values, delta_time):
-        self._pose_detector.appendSensorValues(all_sensors_values)
-        if self._pose_detector.isBotExactlyOnLine():
-            self._correctCourse(all_sensors_values, delta_time)
-        elif self._pose_detector.isBotPartlyOnLine():
-            if self._pose_detector.isOnRightCorner():
-                self._handleBotIsOnRightCorner()
-        elif self._pose_detector.isBotOutOfLine():
-            self._handleBotIsOutOfLine()
-
-    def _handleBotIsOnRightCorner(self):
-        if not self._pose_detector.isOnRightCorner():
-            return
-        # TODO replace for more common algorithm without timings
-        time.sleep(0.1)
-        self._bot_truck.stop()
-        if self._pose_detector.isBotOnLeftTurn():
-            self._bot_truck.turnLeft90()
-        else:
-            self._bot_truck.turnRight90()
-        self._bot_truck.setSpeedPower(20)
-        time.sleep(0.05)
-
-    def _handleBotIsOutOfLine(self):
-        self._keep_following = False
-
-    def _correctCourse(self, all_sensors_values: List, delta_time):
-        self._bot_truck.setSpeedPower(self._speed_power)
-        self._bot_truck.setTurnPower(self._pid_turn_power_calculator.calculateTurnPower(delta_time, all_sensors_values))
 
     def _sleepAndMeasureTime(self):
         time.sleep(self._sleep_time)
@@ -101,10 +70,58 @@ class LineFollower:
                         'sp': self._bot_truck.getSpeedPower(),
                         'tn': self._bot_truck.getTurnPower()
                     },
-                'pid': self._pid_turn_power_calculator.getTelemetryData()
+                'pid': self._line_following_algorithm.getTelemetryData()
             }
         )
 
     @property
     def logger(self):
         return self._logger
+
+
+class LineFollowingAlgorithm:
+
+    def __init__(self, bot_truck, config=LineFollowerConfig()) -> None:
+        self._pid_turn_power_calculator = PidTurnPowerCalculator(config.KP, config.KI, config.KD, config.TARGET_VALUE_LEFT, config.TARGET_VALUE_RIGHT, config.MAX_OUT)
+        self._pose_detector = PoseDetector()
+        self._bot_truck = bot_truck
+        self._speed_power = config.SPEED_POWER
+        self._has_next_step = True
+
+    def doFollowingAlgorithm(self, all_sensors_values, delta_time):
+        self._pose_detector.appendSensorValues(all_sensors_values)
+        if self._pose_detector.isBotExactlyOnLine():
+            #self._has_next_step = True
+            self._correctCourse(all_sensors_values, delta_time)
+        elif self._pose_detector.isBotPartlyOnLine():
+            #self._has_next_step = True
+            if self._pose_detector.isOnRightCorner():
+                self._handleBotIsOnRightCorner()
+        elif self._pose_detector.isBotOutOfLine():
+            self._handleBotIsOutOfLine()
+
+    def _handleBotIsOnRightCorner(self):
+        if not self._pose_detector.isOnRightCorner():
+            return
+        # TODO replace for more common algorithm without timings
+        time.sleep(0.1)
+        self._bot_truck.stop()
+        if self._pose_detector.isBotOnLeftTurn():
+            self._bot_truck.turnLeft90()
+        else:
+            self._bot_truck.turnRight90()
+        self._bot_truck.setSpeedPower(20)
+        time.sleep(0.05)
+
+    def _handleBotIsOutOfLine(self):
+        self._has_next_step = False
+
+    def _correctCourse(self, all_sensors_values: List, delta_time):
+        self._bot_truck.setSpeedPower(self._speed_power)
+        self._bot_truck.setTurnPower(self._pid_turn_power_calculator.calculateTurnPower(delta_time, all_sensors_values))
+
+    def getTelemetryData(self):
+        return self._pid_turn_power_calculator.getTelemetryData()
+
+    def hasNextStep(self):
+        return self._has_next_step
