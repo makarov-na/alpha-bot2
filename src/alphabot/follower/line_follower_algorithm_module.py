@@ -17,18 +17,21 @@ class LineFollowingAlgorithm:
 
     def doFollowingAlgorithm(self, all_sensors_values, delta_time):
         self._pose_detector.appendSensorValues(all_sensors_values)
-        if self._pose_detector.isBotExactlyOnLine():
-            # self._has_next_step = True
-            self._correctCourse(all_sensors_values, delta_time)
-        elif self._pose_detector.isBotPartlyOnLine():
-            # self._has_next_step = True
-            # Нужно ли вообще?
-            # Достаточно ли просто остановиться и включить вращение?
-            # Тут не должно быть задержек цикла - только мгновенные изменения
-            if self._pose_detector.isOnRightCorner():
-                self._handleBotIsOnRightCorner()
-        elif self._pose_detector.isBotOutOfLine():
+        if self._pose_detector.isBotOutOfLine():
             self._handleBotIsOutOfLine()
+        elif self._pose_detector.isOnRightCorner():
+            self._handleBotIsOnRightCorner()
+        elif self._pose_detector.isBotPartlyOnLine():
+            self._handleBotIsPartlyOnLine()
+        elif self._pose_detector.isBotExactlyOnLine():
+            self._correctCourse(all_sensors_values, delta_time)
+
+    def _handleBotIsPartlyOnLine(self):
+        self._bot_truck.setSpeedPower(0)
+        if self._pose_detector.isBotRightToTheLine():
+            self._bot_truck.setTurnPower(-20)
+        else:
+            self._bot_truck.setTurnPower(20)
 
     def _handleBotIsOnRightCorner(self):
         if not self._pose_detector.isOnRightCorner():

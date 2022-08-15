@@ -54,9 +54,9 @@ class TestLineFollowingAlgorithmTest(unittest.TestCase):
         all_sensor_values = [[50, 0, 0, 0, 100], [50, 0, 0, 0, 100], [0, 0, 0, 0, 100]]
 
         # WHEN
-        line_follower.doFollowingAlgorithm(all_sensor_values[0], 0)
-        line_follower.doFollowingAlgorithm(all_sensor_values[1], 0)
-        line_follower.doFollowingAlgorithm(all_sensor_values[2], 0)
+        line_follower.doFollowingAlgorithm(all_sensor_values[0], 1)
+        line_follower.doFollowingAlgorithm(all_sensor_values[1], 1)
+        line_follower.doFollowingAlgorithm(all_sensor_values[2], 1)
 
         # THEN
         line_follower._bot_truck.turnLeft90.assert_called_once()
@@ -71,9 +71,9 @@ class TestLineFollowingAlgorithmTest(unittest.TestCase):
         all_sensor_values = [[100, 0, 0, 0, 50], [100, 0, 0, 0, 50], [100, 0, 0, 0, 0]]
 
         # WHEN
-        line_follower.doFollowingAlgorithm(all_sensor_values[0], 0)
-        line_follower.doFollowingAlgorithm(all_sensor_values[1], 0)
-        line_follower.doFollowingAlgorithm(all_sensor_values[2], 0)
+        line_follower.doFollowingAlgorithm(all_sensor_values[0], 1)
+        line_follower.doFollowingAlgorithm(all_sensor_values[1], 1)
+        line_follower.doFollowingAlgorithm(all_sensor_values[2], 1)
 
         # THEN
         line_follower._bot_truck.turnRight90.assert_called_once()
