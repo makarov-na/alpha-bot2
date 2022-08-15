@@ -97,3 +97,27 @@ class TestAngleDetector(unittest.TestCase):
 
         # THEN
         self.assertTrue(result)
+
+    def test_bot_is_right_to_the_line(self):
+        # GIVEN
+        pose_detector = PoseDetector()
+        all_sensor_values = [0, 0, 0, 0, 100]
+        pose_detector.appendSensorValues(all_sensor_values)
+
+        # WHEN
+        result = pose_detector.isBotRightToTheLine()
+
+        # THEN
+        self.assertTrue(result)
+
+    def test_bot_is_right_to_the_line_false(self):
+        # GIVEN
+        pose_detector = PoseDetector()
+        all_sensor_values = [100, 0, 0, 0, 0]
+        pose_detector.appendSensorValues(all_sensor_values)
+
+        # WHEN
+        result = pose_detector.isBotRightToTheLine()
+
+        # THEN
+        self.assertFalse(result)
