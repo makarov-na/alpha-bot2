@@ -8,29 +8,20 @@ class PidTurnPowerCalculator:
     def __init__(self, KP, KI, KD, TARGET_VALUE_LEFT, TARGET_VALUE_RIGHT, MAX_OUT) -> None:
         self._left_sensor_pid = PidController(KP, KI, KD, TARGET_VALUE_LEFT, MAX_OUT)
         self._right_sensor_pid = PidController(KP, KI, KD, TARGET_VALUE_RIGHT, MAX_OUT)
+        self._left_sensor_pid_out = None
+        self._right_sensor_pid_out = None
 
-    def calculateTurnPower(self, delta_time: float, all_sensors_values: List) -> int:
-        left_sensor_value = all_sensors_values[1]
-        right_sensor_value = all_sensors_values[3]
-        left_sensor_pid_out = self._left_sensor_pid.getOutput(left_sensor_value, delta_time)
-        right_sensor_pid_out = self._right_sensor_pid.getOutput(right_sensor_value, delta_time)
+    def calculateTurnPower(self, delta_time: float, all_sensors_values: List) -> None:
+        left_value_three_sensors = all_sensors_values[1] + all_sensors_values[2] + 100 - all_sensors_values[0]
+        right_value_three_sensors = all_sensors_values[3] + all_sensors_values[2] + 100 - all_sensors_values[4]
+        self._left_sensor_pid_out = self._left_sensor_pid.getOutput(left_value_three_sensors, delta_time)
+        self._right_sensor_pid_out = self._right_sensor_pid.getOutput(right_value_three_sensors, delta_time)
 
-        if left_sensor_pid_out is None or right_sensor_pid_out is None:
-            return 0
+    def getLeftPidOut(self):
+        return -self._left_sensor_pid_out
 
-        if left_sensor_pid_out < 0 and right_sensor_pid_out < 0:
-            if left_sensor_pid_out < right_sensor_pid_out:
-                right_sensor_pid_out = 0
-            elif right_sensor_pid_out < left_sensor_pid_out:
-                left_sensor_pid_out = 0
-
-        if left_sensor_pid_out < 0:
-            return -left_sensor_pid_out
-
-        if right_sensor_pid_out < 0:
-            return right_sensor_pid_out
-
-        return 0
+    def getRightPidOut(self):
+        return self._right_sensor_pid_out
 
     def getTelemetryData(self):
         return {

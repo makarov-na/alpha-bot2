@@ -51,7 +51,11 @@ class LineFollowingAlgorithm:
 
     def _correctCourse(self, all_sensors_values: List, delta_time):
         self._bot_truck.setSpeedPower(self._speed_power)
-        self._bot_truck.setTurnPower(self._pid_turn_power_calculator.calculateTurnPower(delta_time, all_sensors_values))
+        self._pid_turn_power_calculator.calculateTurnPower(delta_time, all_sensors_values)
+        if self._pose_detector.isBotRightToTheLine():
+            self._bot_truck.setTurnPower(self._pid_turn_power_calculator.getRightPidOut())
+        else:
+            self._bot_truck.setTurnPower(self._pid_turn_power_calculator.getLeftPidOut())
 
     def getTelemetryData(self):
         return self._pid_turn_power_calculator.getTelemetryData()
