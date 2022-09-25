@@ -109,6 +109,29 @@ class TestAngleDetector(unittest.TestCase):
         # THEN
         self.assertFalse(result)
 
+    def test_is_bot_exactly_on_line_one_central(self):
+        # GIVEN
+        pose_detector = PoseDetector()
+        all_sensor_values = [100, 50, 0, 0, 100]
+        pose_detector.appendSensorValues(all_sensor_values)
+
+        # WHEN
+        result = pose_detector.isBotOnlineWithCentralSensor()
+
+        # THEN
+        self.assertTrue(result)
+
+    def test_is_bot_exactly_on_line_one_central_false(self):
+        # GIVEN
+        pose_detector = PoseDetector()
+        all_sensor_values = [100, 0, 100, 0, 100]
+        pose_detector.appendSensorValues(all_sensor_values)
+
+        # WHEN
+        result = pose_detector.isBotOnlineWithCentralSensor()
+
+        # THEN
+        self.assertFalse(result)
 
     def test_bot_is_right_to_the_line(self):
         # GIVEN

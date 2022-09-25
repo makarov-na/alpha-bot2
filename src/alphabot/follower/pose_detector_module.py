@@ -53,7 +53,7 @@ class PoseDetector:
                 return False
         return True
 
-    def isBotPartlyOnLine(self):
+    def isBotOnlineWithoutCentralSensor(self):
         if len(list(self._current_state)) == 0:
             return None
         last_sensors = self.getLastValues()
@@ -64,7 +64,7 @@ class PoseDetector:
                 (last_sensors[4] in [SensorStatus.BLACK, SensorStatus.MIDDLE])
         )
 
-    def isBotExactlyOnLine(self):
+    def isBotOnlineWithCentralSensor(self):
         if len(list(self._current_state)) == 0:
             return None
         last_sensors = self.getLastValues()

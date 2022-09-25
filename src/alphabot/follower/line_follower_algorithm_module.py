@@ -21,9 +21,9 @@ class LineFollowingAlgorithm:
             self._handleBotIsOutOfLine()
         elif self._pose_detector.isOnRightCorner():
             self._handleBotIsOnRightCorner()
-        elif self._pose_detector.isBotPartlyOnLine():
+        elif self._pose_detector.isBotOnlineWithoutCentralSensor():
             self._handleBotIsPartlyOnLine()
-        elif self._pose_detector.isBotExactlyOnLine():
+        elif self._pose_detector.isBotOnlineWithCentralSensor():
             self._correctCourse(all_sensors_values, delta_time)
 
     def _handleBotIsPartlyOnLine(self):
