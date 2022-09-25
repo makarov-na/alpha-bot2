@@ -3,7 +3,6 @@ import unittest
 from unittest.mock import MagicMock
 
 from alphabot.follower.pose_detector_module import PoseDetector
-from alphabot.follower.line_sensor_module import LineSensorSoft
 
 
 class TestAngleDetector(unittest.TestCase):
@@ -86,17 +85,30 @@ class TestAngleDetector(unittest.TestCase):
         # THEN
         self.assertTrue(result)
 
-    def test_is_bot_exactly_on_line(self):
+    def test_is_bot_exactly_on_line_three_central(self):
         # GIVEN
         pose_detector = PoseDetector()
-        all_sensor_values = [100, 0, 0, 0, 100]
+        all_sensor_values = [100, 50, 0, 50, 100]
         pose_detector.appendSensorValues(all_sensor_values)
 
         # WHEN
-        result = pose_detector.isBotExactlyOnLine()
+        result = pose_detector.isBotOnlineWithTreCentralSensors()
 
         # THEN
         self.assertTrue(result)
+
+    def test_is_bot_exactly_on_line_three_central_false(self):
+        # GIVEN
+        pose_detector = PoseDetector()
+        all_sensor_values = [100, 100, 0, 50, 100]
+        pose_detector.appendSensorValues(all_sensor_values)
+
+        # WHEN
+        result = pose_detector.isBotOnlineWithTreCentralSensors()
+
+        # THEN
+        self.assertFalse(result)
+
 
     def test_bot_is_right_to_the_line(self):
         # GIVEN

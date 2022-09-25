@@ -70,6 +70,14 @@ class PoseDetector:
         last_sensors = self.getLastValues()
         return last_sensors[2] in [SensorStatus.BLACK, SensorStatus.MIDDLE]
 
+    def isBotOnlineWithTreCentralSensors(self):
+        if len(list(self._current_state)) == 0:
+            return None
+        last_sensors = self.getLastValues()
+        return last_sensors[2] in [SensorStatus.BLACK] \
+               and last_sensors[1] in [SensorStatus.BLACK, SensorStatus.MIDDLE] \
+               and last_sensors[3] in [SensorStatus.BLACK, SensorStatus.MIDDLE]
+
     def getLastValues(self):
         last_sensors = list(self._current_state)[len(list(self._current_state)) - 1]
         return last_sensors
