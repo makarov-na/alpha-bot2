@@ -1,0 +1,33 @@
+@startuml
+
+class LineFollower {
+    -FollowerState current_state
+    -Set<FollowerState> possible_states
+}
+
+abstract class FollowerState{
+    +activate(Event activation_event)
+    +ActionResult doAction()
+}
+
+FollowerState<|-- Init
+FollowerState<|-- LineFollow
+FollowerState<|-- TurnRightAngle
+FollowerState<|-- LineSearch
+FollowerState<|-- Stop
+
+class ActionResult {
+    FollowerState next_state
+}
+
+
+LineFollower --> ActionResult
+FollowerState -> ActionResult
+Event <- FollowerState
+LineFollower  --> Event
+
+LineFollower --> FollowerState
+
+
+
+@enduml
