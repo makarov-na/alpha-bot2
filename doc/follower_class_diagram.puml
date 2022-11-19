@@ -6,8 +6,8 @@ class LineFollower {
 }
 
 abstract class FollowerState{
-    +activate(Event activation_event)
-    +ActionResult doAction()
+    +ActionResult doAction(Event event)
+    -activate(Event activation_event)
 }
 
 FollowerState<|-- Init
@@ -20,13 +20,28 @@ class ActionResult {
     FollowerState next_state
 }
 
+enum Pose {
+    OUT_OF_LINE
+    ON_LINE_WITH_TREE_CENTRAL_SENSORS
+    ON_LINE_WITH_CENTRAL_SENSOR
+    ON_LINE_WITHOUT_CENTRAL_SENSOR
+    ON_LEFT_TURN
+    ON_RIGHT_TURN
+    ON_RIGHT_CORNER
+}
+
+class Event {
+    Pose pose
+    Integer eventTime
+    List sensorValues
+}
 
 LineFollower --> ActionResult
 FollowerState -> ActionResult
-Event <- FollowerState
+FollowerState -left-> Event
 LineFollower  --> Event
-
-LineFollower --> FollowerState
+Event -up-> Pose
+LineFollower -down-> FollowerState
 
 
 
