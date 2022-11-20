@@ -1,24 +1,19 @@
 @startuml
 
 class LineFollower {
-    -FollowerState current_state
-    -Set<FollowerState> possible_states
+    -State current_state
 }
 
-abstract class FollowerState{
-    +ActionResult doAction(Event event)
+abstract class State{
+    +State doAction(Event event)
     -activate(Event activation_event)
 }
 
-FollowerState<|-- Init
-FollowerState<|-- LineFollow
-FollowerState<|-- TurnRightAngle
-FollowerState<|-- LineSearch
-FollowerState<|-- Stop
-
-class ActionResult {
-    FollowerState next_state
-}
+State<|-- Init
+State<|-- LineFollow
+State<|-- TurnRightAngle
+State<|-- LineSearch
+State<|-- Stop
 
 enum Pose {
     OUT_OF_LINE
@@ -36,12 +31,10 @@ class Event {
     List sensorValues
 }
 
-LineFollower --> ActionResult
-FollowerState -> ActionResult
-FollowerState -left-> Event
+State -right-> Event
 LineFollower  --> Event
 Event -up-> Pose
-LineFollower -down-> FollowerState
+LineFollower -down-> State
 
 
 
