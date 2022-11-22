@@ -1,5 +1,5 @@
 from collections import deque
-from enum import Enum
+from enum import Enum, Flag, auto
 
 from alphabot.follower.line_sensor_module import LineSensorLevel
 
@@ -8,6 +8,15 @@ class SensorStatus(Enum):
     BLACK = 'X'
     WHITE = '_'
     MIDDLE = '|'
+
+
+class Pose(Flag):
+    OUT_OF_LINE = auto()
+    ON_LINE_WITH_TREE_CENTRAL_SENSORS = auto()
+    ON_LINE_WITH_CENTRAL_SENSOR = auto()
+    ON_LINE_WITHOUT_CENTRAL_SENSOR = auto()
+    ON_LEFT_TURN = auto()
+    ON_RIGHT_TURN = auto()
 
 
 class PoseDetector:
@@ -25,7 +34,10 @@ class PoseDetector:
         self._current_state = deque(maxlen=3)
         self._current_state_raw = deque(maxlen=3)
 
-    def appendSensorValues(self, all_sensors_values):
+    def getCurrentPose(self, all_sensors_values) -> Pose:
+        self._appendSensorValues(all_sensors_values)
+
+    def _appendSensorValues(self, all_sensors_values):
         current_line = []
         for curr_value in all_sensors_values:
             current_line.append(self._getStatus(curr_value))
@@ -88,9 +100,3 @@ class PoseDetector:
         if self._sensor_level.isSensorOnWhite(curr_value):
             return SensorStatus.WHITE
         return SensorStatus.MIDDLE
-
-    def isBotRightToTheLine(self):
-        last_sensors = list(self._current_state_raw)[len(list(self._current_state_raw)) - 1]
-        left_side_sensors_sum = last_sensors[0] + last_sensors[1]
-        right_side_sensors_sum = last_sensors[3] + last_sensors[4]
-        return right_side_sensors_sum > left_side_sensors_sum

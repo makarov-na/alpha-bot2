@@ -1,64 +1,49 @@
-import time
 from typing import List
 
 from alphabot.follower.config_module import LineFollowerConfig
+from alphabot.follower.event_module import Event
 from alphabot.follower.pid_turn_power_calculator_module import PidTurnPowerCalculator
-from alphabot.follower.pose_detector_module import PoseDetector
+from alphabot.follower.pose_detector_module import Pose
+from alphabot.truck_module import Truck
 
 
 class LineFollowingAlgorithm:
 
-    def __init__(self, bot_truck, config=LineFollowerConfig()) -> None:
+    def __init__(self, bot_truck: Truck, config=LineFollowerConfig()) -> None:
         self._pid_turn_power_calculator = PidTurnPowerCalculator(config.KP, config.KI, config.KD, config.TARGET_VALUE_LEFT, config.TARGET_VALUE_RIGHT, config.MAX_OUT)
-        self._pose_detector = PoseDetector()
         self._bot_truck = bot_truck
         self._speed_power = config.SPEED_POWER
-        self._has_next_step = True
+        self._prevent_time_ns = None
 
-    def doFollowingAlgorithm(self, all_sensors_values, delta_time):
-        self._pose_detector.appendSensorValues(all_sensors_values)
-        if self._pose_detector.isBotOutOfLine():
-            self._handleBotIsOutOfLine()
-        elif self._pose_detector.isOnRightCorner():
-            self._handleBotIsOnRightCorner()
-        elif self._pose_detector.isBotOnlineWithoutCentralSensor():
-            self._handleBotIsPartlyOnLine()
-        elif self._pose_detector.isBotOnlineWithCentralSensor():
-            self._correctCourse(all_sensors_values, delta_time)
-
-    def _handleBotIsPartlyOnLine(self):
-        self._bot_truck.setSpeedPower(0)
-        if self._pose_detector.isBotRightToTheLine():
-            self._bot_truck.setTurnPower(-20)
-        else:
-            self._bot_truck.setTurnPower(20)
-
-    def _handleBotIsOnRightCorner(self):
-        if not self._pose_detector.isOnRightCorner():
-            return
-        # TODO replace for more common algorithm without timings
-        time.sleep(0.1)
-        self._bot_truck.stop()
-        if self._pose_detector.isBotOnLeftTurn():
-            self._bot_truck.turnLeft90()
-        else:
-            self._bot_truck.turnRight90()
-        self._bot_truck.setSpeedPower(20)
-        time.sleep(0.05)
-
-    def _handleBotIsOutOfLine(self):
-        self._has_next_step = False
+    def doAction(self, event: Event):
+        if event.pose == Pose.ON_LINE_WITH_TREE_CENTRAL_SENSORS:
+            self._bot_truck.setSpeedPower(self._speed_power * 1.2)
+        elif event.pose == Pose.ON_LINE_WITH_CENTRAL_SENSOR:
+            self._bot_truck.setSpeedPower(self._speed_power)
+        elif event.pose == Pose.ON_LINE_WITHOUT_CENTRAL_SENSOR:
+            self._bot_truck.setSpeedPower(0)
+        self._correctCourse(event.sensor_values, self._calculate_delta_time_ms(event.time_ns))
 
     def _correctCourse(self, all_sensors_values: List, delta_time):
-        self._bot_truck.setSpeedPower(self._speed_power)
         self._pid_turn_power_calculator.calculateTurnPower(delta_time, all_sensors_values)
-        if self._pose_detector.isBotRightToTheLine():
+        if self._isBotRightToTheLine(all_sensors_values):
             self._bot_truck.setTurnPower(self._pid_turn_power_calculator.getRightPidOut())
         else:
             self._bot_truck.setTurnPower(self._pid_turn_power_calculator.getLeftPidOut())
 
+    def _isBotRightToTheLine(self, all_sensors_values):
+        left_side_sensors_sum = all_sensors_values[0] + all_sensors_values[1]
+        right_side_sensors_sum = all_sensors_values[3] + all_sensors_values[4]
+        return right_side_sensors_sum > left_side_sensors_sum
+
     def getTelemetryData(self):
         return self._pid_turn_power_calculator.getTelemetryData()
 
-    def hasNextStep(self):
-        return self._has_next_step
+    def _calculate_delta_time_ms(self, current_time_ns):
+        if self._prevent_time_ns is None:
+            self._prevent_time_ms = current_time_ns
+            return 1
+        delta_time_ns = (current_time_ns - self._prevent_time_ns)
+        self._prevent_time_ns = current_time_ns
+        delta_time_ms = delta_time_ns / 1_000_000
+        return delta_time_ms
