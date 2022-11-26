@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, Mock
 
-from alphabot.follower.line_sensor_module import LineSensorNormalizer, AgvFilter, LineSensorFilter
-from alphabot.hardware.line_sensor_module import LineSensor
+from alphabot.truck.line_sensor_module import LineSensorNormalizer, AgvFilter, LineSensorFilter
+from alphabot.truck.hardware.line_sensor_module import LineSensor
 
 
 class TestLineSensorFilter(unittest.TestCase):

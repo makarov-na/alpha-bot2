@@ -1,7 +1,7 @@
 import unittest
 
-from alphabot.hardware.line_sensor_module import LineSensorsAdc, LineSensor
-from tests.alphabot.hardware.gpio_mock_module import GpioWrapperMock
+from alphabot.truck.hardware.line_sensor_module import LineSensorsAdc, LineSensor
+from tests.alphabot.truck.hardware.gpio_mock_module import GpioWrapperMock
 from unittest.mock import MagicMock
 from unittest.mock import call
 

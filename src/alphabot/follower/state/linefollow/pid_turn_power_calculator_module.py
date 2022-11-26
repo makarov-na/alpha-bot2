@@ -1,6 +1,6 @@
 from typing import List
 
-from alphabot.pid_module import PidController
+from alphabot.follower.state.linefollow.pid_module import PidController
 
 
 class PidTurnPowerCalculator:

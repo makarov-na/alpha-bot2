@@ -2,7 +2,7 @@ import time
 import unittest
 from unittest.mock import MagicMock
 
-from alphabot.follower.pose_detector_module import PoseDetector
+from alphabot.follower.pose.pose_detector_module import PoseDetector
 
 
 class TestAngleDetector(unittest.TestCase):

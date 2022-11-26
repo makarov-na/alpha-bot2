@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import MagicMock
 
-from alphabot.truck_module import Truck
+from alphabot.truck.truck_module import Truck
+from tests.alphabot.truck.hardware.gpio_mock_module import GpioWrapperMock
 
 
 # logging.basicConfig(level=logging.INFO)
@@ -9,11 +10,23 @@ from alphabot.truck_module import Truck
 
 class TestTruck(unittest.TestCase):
 
+    def test_constructor_without_motors(self):
+        # GIVEN
+        gpio_mock = GpioWrapperMock()
+        gpio_mock.setup = MagicMock()
+        gpio_mock.createPwm = MagicMock()
+
+        # WHEN
+        truck = Truck(gpio_mock)
+
+        # THEN
+        self.assertIsNotNone(truck)
+
     def test_speed_power_positive_set(self):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 10
 
         # WHEN
@@ -27,7 +40,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 10
         truck.setSpeedPower(power_value)
 
@@ -43,7 +56,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 80
         truck.setSpeedPower(power_value)
 
@@ -59,7 +72,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 10
         truck.setSpeedPower(power_value)
 
@@ -75,7 +88,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 80
         truck.setSpeedPower(power_value)
 
@@ -91,7 +104,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 10
         truck.setSpeedPower(power_value)
 
@@ -107,7 +120,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 10
         truck.setSpeedPower(power_value)
 
@@ -123,7 +136,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 0
         truck.setSpeedPower(power_value)
 
@@ -139,7 +152,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 0
         truck.setSpeedPower(power_value)
 
@@ -155,7 +168,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 0
         truck.setSpeedPower(power_value)
 
@@ -171,7 +184,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = -10
 
         # WHEN
@@ -185,7 +198,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 0
 
         # WHEN
@@ -199,7 +212,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 101
 
         # WHEN
@@ -211,7 +224,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
 
         # WHEN
         truck.stop()
@@ -224,7 +237,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         truck.setSpeedPower(10)
         truck._waitForPowerStop = MagicMock
 
@@ -241,7 +254,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = -10
         truck.setSpeedPower(power_value)
 
@@ -257,7 +270,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = -10
         truck.setSpeedPower(power_value)
 
@@ -273,7 +286,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 10
 
         # WHEN
@@ -287,7 +300,7 @@ class TestTruck(unittest.TestCase):
         # GIVEN
         left_motor_mock = self.create_mock_motor()
         right_motor_mock = self.create_mock_motor()
-        truck = Truck(left_motor_mock, right_motor_mock)
+        truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
         power_value = 10
 
         # WHEN

@@ -1,7 +1,7 @@
 import time
 from typing import List
 
-from alphabot.follower.pose_detector_module import Pose
+from alphabot.follower.pose.pose_detector_module import Pose
 
 
 class Event:

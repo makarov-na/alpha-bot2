@@ -1,6 +1,6 @@
 import unittest
 
-from alphabot.pid_module import PidController
+from alphabot.follower.state.linefollow.pid_module import PidController
 
 
 class TestPid(unittest.TestCase):

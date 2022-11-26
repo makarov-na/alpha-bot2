@@ -1,7 +1,7 @@
-from alphabot.follower.event_module import Event
-from alphabot.follower.line_follower_algorithm_module import LineFollowingAlgorithm
-from alphabot.follower.pose_detector_module import Pose
-from alphabot.truck_module import Truck
+from alphabot.follower.event.event_module import Event
+from alphabot.follower.state.linefollow.line_follower_algorithm_module import LineFollowingAlgorithm
+from alphabot.follower.pose.pose_detector_module import Pose
+from alphabot.truck.truck_module import Truck
 
 
 class State:

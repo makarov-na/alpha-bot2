@@ -1,20 +1,25 @@
 import time
 
-from alphabot.hardware.motor_module import Motor
+from alphabot.truck.hardware.gpio_module import GpioWrapper
+from alphabot.truck.hardware.motor_module import Motor, LeftMotor, RightMotor
 import logging
 
 
 class Truck:
-    # TODO Values must be calculated in calibration process
-    NINETY_DEGREE_RIGHT_TURN_TIME = 0.3
-    NINETY_DEGREE_LEFT_TURN_TIME = 0.35
-    NINETY_DEGREE_TURN_POWER = 50
     STOP_POWER_FACTOR = 2.35
     POWER_STOP_DURATION = 0.15
 
-    def __init__(self, left_motor: Motor, right_motor: Motor) -> None:
+    def __init__(self, gpio: GpioWrapper = None, left_motor: Motor = None, right_motor: Motor = None) -> None:
         self._logger = logging.getLogger(__name__)
-        self._left_motor = left_motor
+        if left_motor is None:
+            self._left_motor = LeftMotor(gpio)
+        else:
+            self._left_motor = left_motor
+
+        if right_motor is None:
+            self._right_motor = RightMotor(gpio)
+        else:
+            self._right_motor = right_motor
         self._right_motor = right_motor
         self._speed_power = 0
         self._rotation_power = 0
@@ -54,18 +59,6 @@ class Truck:
     def rotateAroundLeftWheel(self, turn_power):
         self._left_motor.stop()
         self._right_motor.forward(turn_power)
-
-    def turnLeft90(self):
-        self._rotation_power = -Truck.NINETY_DEGREE_TURN_POWER
-        self._sendOutputToMotors()
-        time.sleep(Truck.NINETY_DEGREE_LEFT_TURN_TIME)
-        self._rotation_power = 0
-
-    def turnRight90(self):
-        self._rotation_power = Truck.NINETY_DEGREE_TURN_POWER
-        self._sendOutputToMotors()
-        time.sleep(Truck.NINETY_DEGREE_RIGHT_TURN_TIME)
-        self._rotation_power = 0
 
     def _sendOutputToMotors(self):
 

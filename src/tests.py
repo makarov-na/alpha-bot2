@@ -1,11 +1,8 @@
 import logging
-import time
 
-from alphabot.hardware.gpio_module import GpioWrapper
-from alphabot.hardware.line_sensor_module import LineSensorsAdc
-from alphabot.telemetry.telemetry_module import Telemetry
-from alphabot.hardware.motor_module import LeftMotor, RightMotor
-from alphabot.truck_module import Truck
+from alphabot.truck.hardware.gpio_module import GpioWrapper
+from alphabot.truck.hardware.motor_module import LeftMotor, RightMotor
+from alphabot.truck.truck_module import Truck
 
 
 logger = logging.getLogger(__name__)

@@ -17,8 +17,8 @@ class TestLineFollower(unittest.TestCase):
         line_follower = LineFollower(gpio=MagicMock())
         line_follower._bot_truck = MagicMock()
         line_follower._bot_truck.stop = MagicMock()
-        line_follower._sleepAndMeasureTime = MagicMock()
-        line_follower._sleepAndMeasureTime.return_value = 11
+        line_follower._sleep = MagicMock()
+        line_follower._sleep.return_value = 11
         line_follower._sensor.readSensors = MagicMock()
         line_follower._sendTelemetry = MagicMock()
         line_follower._sensor.readSensors.return_value = [1, 2, 3, 4, 5]
@@ -40,7 +40,7 @@ class TestLineFollower(unittest.TestCase):
         # THEN
         line_follower._bot_truck.stop.assert_called()
         line_follower._sensor.readSensors.assert_called()
-        line_follower._sleepAndMeasureTime.assert_called()
+        line_follower._sleep.assert_called()
         line_follower._sendTelemetry.assert_called()
 
 

@@ -1,7 +1,7 @@
 from collections import deque
 from enum import Enum, Flag, auto
 
-from alphabot.follower.line_sensor_module import LineSensorLevel
+from alphabot.truck.line_sensor_module import LineSensorLevel
 
 
 class SensorStatus(Enum):
@@ -73,7 +73,7 @@ class PoseDetector:
     def _isBotOutOfLine(self):
         if len(list(self._current_state)) == 0:
             return None
-        for sensor in self.getLastValues():
+        for sensor in self._getLastValues():
             if sensor != SensorStatus.WHITE:
                 return False
         return True
@@ -81,7 +81,7 @@ class PoseDetector:
     def _isBotOnlineWithoutCentralSensor(self):
         if len(list(self._current_state)) == 0:
             return None
-        last_sensors = self.getLastValues()
+        last_sensors = self._getLastValues()
         return last_sensors[2] == SensorStatus.WHITE and (
                 (last_sensors[0] in [SensorStatus.BLACK, SensorStatus.MIDDLE]) or
                 (last_sensors[1] in [SensorStatus.BLACK, SensorStatus.MIDDLE]) or
@@ -92,18 +92,18 @@ class PoseDetector:
     def _isBotOnlineWithCentralSensor(self):
         if len(list(self._current_state)) == 0:
             return None
-        last_sensors = self.getLastValues()
+        last_sensors = self._getLastValues()
         return last_sensors[2] in [SensorStatus.BLACK, SensorStatus.MIDDLE]
 
     def _isBotOnlineWithTreCentralSensors(self):
         if len(list(self._current_state)) == 0:
             return None
-        last_sensors = self.getLastValues()
+        last_sensors = self._getLastValues()
         return last_sensors[2] in [SensorStatus.BLACK] \
                and last_sensors[1] in [SensorStatus.BLACK, SensorStatus.MIDDLE] \
                and last_sensors[3] in [SensorStatus.BLACK, SensorStatus.MIDDLE]
 
-    def getLastValues(self):
+    def _getLastValues(self):
         last_sensors = list(self._current_state)[len(list(self._current_state)) - 1]
         return last_sensors
 

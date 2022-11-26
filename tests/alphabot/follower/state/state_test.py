@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import MagicMock
 
-from alphabot.follower.event_module import Event
-from alphabot.follower.pose_detector_module import Pose
-from alphabot.follower.state_module import Init, Stop, LineFollow, LineSearch, TurnRightAngle
+from alphabot.follower.event.event_module import Event
+from alphabot.follower.pose.pose_detector_module import Pose
+from alphabot.follower.state.state_module import Init, Stop, LineFollow, TurnRightAngle
 
 
 class TestState(unittest.TestCase):
