@@ -67,7 +67,7 @@ class TestLineFollowingAlgorithmTest(unittest.TestCase):
         result = state.doAction(events[2])
 
         # THEN
-        self.assertTrue(isinstance(result, TurnRightAngle))
+        self.assertIsInstance(result, TurnRightAngle)
 
     def test_handle_bot_on_right_corner_right(self):
         # GIVEN
@@ -88,7 +88,7 @@ class TestLineFollowingAlgorithmTest(unittest.TestCase):
         result = state.doAction(events[2])
 
         # THEN
-        self.assertTrue(isinstance(result, TurnRightAngle))
+        self.assertIsInstance(result, TurnRightAngle)
 
     def test_bot_is_right_to_the_line(self):
         # GIVEN

@@ -55,8 +55,14 @@ class Init(State):
     def doAction(self, event: Event) -> State:
         self._truck.stop()
         if event.pose == Pose.OUT_OF_LINE:
-            return LineSearch(self._truck).doAction(event)
+            return self._createLineSearch(event)
+        return self._createLineFollow(event)
+
+    def _createLineFollow(self, event):
         return LineFollow(self._truck).doAction(event)
+
+    def _createLineSearch(self, event):
+        return LineSearch(self._truck).doAction(event)
 
 
 class LineSearch(State):

@@ -36,6 +36,19 @@ class PoseDetector:
 
     def getCurrentPose(self, all_sensors_values) -> Pose:
         self._appendSensorValues(all_sensors_values)
+        if self._isBotOutOfLine():
+            return Pose.OUT_OF_LINE
+        elif self._isBotOnLeftTurn():
+            return Pose.ON_LEFT_TURN
+        elif self._isBotOnRightTurn():
+            return Pose.ON_RIGHT_TURN
+        elif self._isBotOnlineWithTreCentralSensors():
+            return Pose.ON_LINE_WITH_TREE_CENTRAL_SENSORS
+        elif self._isBotOnlineWithCentralSensor():
+            return Pose.ON_LINE_WITH_CENTRAL_SENSOR
+        elif self._isBotOnlineWithoutCentralSensor():
+            return Pose.ON_LINE_WITHOUT_CENTRAL_SENSOR
+        raise Exception('Unknown pose')
 
     def _appendSensorValues(self, all_sensors_values):
         current_line = []
@@ -44,20 +57,20 @@ class PoseDetector:
         self._current_state_raw.append(all_sensors_values)
         self._current_state.append(current_line)
 
-    def isBotOnLeftTurn(self):
+    def _isBotOnLeftTurn(self):
         if self._left_turn_pattern == list(self._current_state):
             return True
         return False
 
-    def isBotOnRightTurn(self):
+    def _isBotOnRightTurn(self):
         if self._right_turn_pattern == list(self._current_state):
             return True
         return False
 
     def isOnRightCorner(self):
-        return self.isBotOnRightTurn() or self.isBotOnLeftTurn()
+        return self._isBotOnRightTurn() or self._isBotOnLeftTurn()
 
-    def isBotOutOfLine(self):
+    def _isBotOutOfLine(self):
         if len(list(self._current_state)) == 0:
             return None
         for sensor in self.getLastValues():
@@ -65,7 +78,7 @@ class PoseDetector:
                 return False
         return True
 
-    def isBotOnlineWithoutCentralSensor(self):
+    def _isBotOnlineWithoutCentralSensor(self):
         if len(list(self._current_state)) == 0:
             return None
         last_sensors = self.getLastValues()
@@ -76,13 +89,13 @@ class PoseDetector:
                 (last_sensors[4] in [SensorStatus.BLACK, SensorStatus.MIDDLE])
         )
 
-    def isBotOnlineWithCentralSensor(self):
+    def _isBotOnlineWithCentralSensor(self):
         if len(list(self._current_state)) == 0:
             return None
         last_sensors = self.getLastValues()
         return last_sensors[2] in [SensorStatus.BLACK, SensorStatus.MIDDLE]
 
-    def isBotOnlineWithTreCentralSensors(self):
+    def _isBotOnlineWithTreCentralSensors(self):
         if len(list(self._current_state)) == 0:
             return None
         last_sensors = self.getLastValues()

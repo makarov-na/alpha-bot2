@@ -20,11 +20,11 @@ class TestAngleDetector(unittest.TestCase):
         angle_detector._appendSensorValues(all_sensor_values[0])
         angle_detector._appendSensorValues(all_sensor_values[0])
         angle_detector._appendSensorValues(all_sensor_values[0])
-        result0 = angle_detector.isBotOnLeftTurn()
+        result0 = angle_detector._isBotOnLeftTurn()
         angle_detector._appendSensorValues(all_sensor_values[1])
-        result1 = angle_detector.isBotOnLeftTurn()
+        result1 = angle_detector._isBotOnLeftTurn()
         angle_detector._appendSensorValues(all_sensor_values[2])
-        result2 = angle_detector.isBotOnLeftTurn()
+        result2 = angle_detector._isBotOnLeftTurn()
 
         # THEN
         self.assertFalse(result0)
@@ -38,11 +38,11 @@ class TestAngleDetector(unittest.TestCase):
 
         # WHEN
         angle_detector._appendSensorValues(all_sensor_values[0])
-        result0 = angle_detector.isBotOnLeftTurn()
+        result0 = angle_detector._isBotOnLeftTurn()
         angle_detector._appendSensorValues(all_sensor_values[1])
-        result1 = angle_detector.isBotOnLeftTurn()
+        result1 = angle_detector._isBotOnLeftTurn()
         angle_detector._appendSensorValues(all_sensor_values[2])
-        result2 = angle_detector.isBotOnLeftTurn()
+        result2 = angle_detector._isBotOnLeftTurn()
 
         # THEN
         self.assertFalse(result0)
@@ -56,7 +56,7 @@ class TestAngleDetector(unittest.TestCase):
 
         # WHEN
         angle_detector._appendSensorValues(all_sensor_values[0])
-        result2 = angle_detector.isBotOnLeftTurn()
+        result2 = angle_detector._isBotOnLeftTurn()
 
         # THEN
         self.assertFalse(result2)
@@ -68,7 +68,7 @@ class TestAngleDetector(unittest.TestCase):
         pose_detector._appendSensorValues(sensor_values)
 
         # WHEN
-        result = pose_detector.isBotOutOfLine()
+        result = pose_detector._isBotOutOfLine()
 
         # THEN
         self.assertFalse(result)
@@ -80,7 +80,7 @@ class TestAngleDetector(unittest.TestCase):
         pose_detector._appendSensorValues(sensor_values)
 
         # WHEN
-        result = pose_detector.isBotOutOfLine()
+        result = pose_detector._isBotOutOfLine()
 
         # THEN
         self.assertTrue(result)
@@ -92,7 +92,7 @@ class TestAngleDetector(unittest.TestCase):
         pose_detector._appendSensorValues(all_sensor_values)
 
         # WHEN
-        result = pose_detector.isBotOnlineWithTreCentralSensors()
+        result = pose_detector._isBotOnlineWithTreCentralSensors()
 
         # THEN
         self.assertTrue(result)
@@ -104,7 +104,7 @@ class TestAngleDetector(unittest.TestCase):
         pose_detector._appendSensorValues(all_sensor_values)
 
         # WHEN
-        result = pose_detector.isBotOnlineWithTreCentralSensors()
+        result = pose_detector._isBotOnlineWithTreCentralSensors()
 
         # THEN
         self.assertFalse(result)
@@ -116,7 +116,7 @@ class TestAngleDetector(unittest.TestCase):
         pose_detector._appendSensorValues(all_sensor_values)
 
         # WHEN
-        result = pose_detector.isBotOnlineWithCentralSensor()
+        result = pose_detector._isBotOnlineWithCentralSensor()
 
         # THEN
         self.assertTrue(result)
@@ -128,7 +128,7 @@ class TestAngleDetector(unittest.TestCase):
         pose_detector._appendSensorValues(all_sensor_values)
 
         # WHEN
-        result = pose_detector.isBotOnlineWithCentralSensor()
+        result = pose_detector._isBotOnlineWithCentralSensor()
 
         # THEN
         self.assertFalse(result)
