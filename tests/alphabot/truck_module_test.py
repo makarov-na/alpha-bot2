@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from alphabot.truck_module import Truck
 
 
-#logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 
 class TestTruck(unittest.TestCase):
@@ -251,6 +251,34 @@ class TestTruck(unittest.TestCase):
         # THEN
         left_motor_mock.backward.assert_called_with(10)
         right_motor_mock.backward.assert_called_with(30)
+
+    def test_rotate_around_left_wheel(self):
+        # GIVEN
+        left_motor_mock = self.create_mock_motor()
+        right_motor_mock = self.create_mock_motor()
+        truck = Truck(left_motor_mock, right_motor_mock)
+        power_value = 10
+
+        # WHEN
+        truck.rotateAroundLeftWheel(power_value)
+
+        # THEN
+        left_motor_mock.stop.assert_called()
+        right_motor_mock.forward.assert_called_with(power_value)
+
+    def test_rotate_around_right_wheel(self):
+        # GIVEN
+        left_motor_mock = self.create_mock_motor()
+        right_motor_mock = self.create_mock_motor()
+        truck = Truck(left_motor_mock, right_motor_mock)
+        power_value = 10
+
+        # WHEN
+        truck.rotateAroundRightWheel(power_value)
+
+        # THEN
+        right_motor_mock.stop.assert_called()
+        left_motor_mock.forward.assert_called_with(power_value)
 
     def create_mock_motor(self):
         motor_mock = MagicMock()

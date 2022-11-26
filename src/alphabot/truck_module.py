@@ -109,9 +109,9 @@ class Truck:
         return self._rotation_power
 
     def rotateAroundRightWheel(self, turn_power):
-        self._right_motor.stop();
+        self._right_motor.stop()
         self._left_motor.forward(turn_power)
 
     def rotateAroundLeftWheel(self, turn_power):
-        self._left_motor.stop();
+        self._left_motor.stop()
         self._right_motor.forward(turn_power)
