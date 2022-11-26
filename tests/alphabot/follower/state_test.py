@@ -65,7 +65,7 @@ class TestState(unittest.TestCase):
 
         # THEN
         self.assertEqual(outState, state._createLineSearch.return_value)
-        track.stop.assert_called_once()
+        track.powerStop.assert_called_once()
 
     def test_turn_right_angle_state_on_line(self):
         # GIVEN
@@ -76,8 +76,8 @@ class TestState(unittest.TestCase):
         state._createLineFollow.return_value = MagicMock()
 
         # WHEN
-        outState = state.doAction(Event(Pose.ON_LINE_WITH_TREE_CENTRAL_SENSORS, [100, 0, 0, 0, 100]))
+        outState = state.doAction(Event(Pose.ON_LINE_WITH_CENTRAL_SENSOR, [100, 0, 0, 0, 100]))
 
         # THEN
         self.assertEqual(outState, state._createLineFollow.return_value)
-        track.stop.assert_called_once()
+        track.powerStop.assert_called_once()

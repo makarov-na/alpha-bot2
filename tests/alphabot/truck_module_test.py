@@ -220,6 +220,23 @@ class TestTruck(unittest.TestCase):
         left_motor_mock.stop.assert_called()
         right_motor_mock.stop.assert_called()
 
+    def test_power_stop(self):
+        # GIVEN
+        left_motor_mock = self.create_mock_motor()
+        right_motor_mock = self.create_mock_motor()
+        truck = Truck(left_motor_mock, right_motor_mock)
+        truck.setSpeedPower(10)
+        truck._waitForPowerStop = MagicMock
+
+        # WHEN
+        truck.powerStop()
+
+        # THEN
+        left_motor_mock.backward.assert_called()
+        right_motor_mock.backward.assert_called()
+        left_motor_mock.stop.assert_called()
+        right_motor_mock.stop.assert_called()
+
     def test_speed_power_negative_with_turn_power_positive_small(self):
         # GIVEN
         left_motor_mock = self.create_mock_motor()

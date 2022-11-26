@@ -15,23 +15,24 @@ class TurnRightAngle(State):
     def __init__(self, truck: Truck) -> None:
         self._truck = truck
         self._start_pose = None
+        self._turn_power = 20
 
     def doAction(self, event: Event) -> State:
         if self._start_pose is None:
             self._start_pose = event.pose
-            self._truck.stop()
+            self._truck.powerStop()
         if event.pose == Pose.OUT_OF_LINE:
             return self._createLineSearch(event)
-        if event.pose == Pose.ON_LINE_WITH_TREE_CENTRAL_SENSORS:
+        if event.pose == Pose.ON_LINE_WITH_CENTRAL_SENSOR:
             return self._createLineFollow(event)
         if self._start_pose == Pose.ON_RIGHT_TURN:
-            self._truck.rotateAroundRightWheel(20)
+            self._truck.rotateAroundRightWheel(self._turn_power)
         else:
-            self._truck.rotateAroundLeftWheel(20)
+            self._truck.rotateAroundLeftWheel(self._turn_power)
         return self
 
     def _createLineFollow(self, event):
-        LineFollow(self._truck).doAction(event)
+        return LineFollow(self._truck).doAction(event)
 
     def _createLineSearch(self, event):
         return LineSearch(self._truck).doAction(event)

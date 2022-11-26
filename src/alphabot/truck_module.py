@@ -9,6 +9,8 @@ class Truck:
     NINETY_DEGREE_RIGHT_TURN_TIME = 0.3
     NINETY_DEGREE_LEFT_TURN_TIME = 0.35
     NINETY_DEGREE_TURN_POWER = 50
+    STOP_POWER_FACTOR = 2.35
+    POWER_STOP_DURATION = 0.15
 
     def __init__(self, left_motor: Motor, right_motor: Motor) -> None:
         self._logger = logging.getLogger(__name__)
@@ -33,6 +35,25 @@ class Truck:
         self._rotation_power = 0
         self._speed_power = 0
         self._sendOutputToMotors()
+
+    def powerStop(self):
+        self._rotation_power = 0
+        self._speed_power = -self._speed_power * Truck.STOP_POWER_FACTOR
+        self._sendOutputToMotors()
+        self._waitForPowerStop()
+        self.stop()
+
+    def _waitForPowerStop(self):
+        # TODO make duration calculation based on current speed
+        time.sleep(Truck.POWER_STOP_DURATION)
+
+    def rotateAroundRightWheel(self, turn_power):
+        self._right_motor.stop()
+        self._left_motor.forward(turn_power)
+
+    def rotateAroundLeftWheel(self, turn_power):
+        self._left_motor.stop()
+        self._right_motor.forward(turn_power)
 
     def turnLeft90(self):
         self._rotation_power = -Truck.NINETY_DEGREE_TURN_POWER
@@ -107,11 +128,3 @@ class Truck:
 
     def getTurnPower(self):
         return self._rotation_power
-
-    def rotateAroundRightWheel(self, turn_power):
-        self._right_motor.stop()
-        self._left_motor.forward(turn_power)
-
-    def rotateAroundLeftWheel(self, turn_power):
-        self._left_motor.stop()
-        self._right_motor.forward(turn_power)
