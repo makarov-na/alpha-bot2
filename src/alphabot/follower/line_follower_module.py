@@ -6,7 +6,7 @@ from alphabot.bot.hardware.gpio_module import GpioWrapper
 from alphabot.follower.config_module import LineFollowerConfig
 from alphabot.follower.event.event_module import Event
 from alphabot.follower.pose.pose_detector_module import PoseDetector
-from alphabot.follower.state.state_module import Init
+from alphabot.follower.state.init.init_state_module import Init
 from alphabot.telemetry.telemetry_module import Telemetry
 
 

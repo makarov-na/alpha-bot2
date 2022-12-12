@@ -3,9 +3,10 @@ import unittest
 from unittest.mock import MagicMock
 
 from alphabot.follower.event.event_module import Event
+from alphabot.follower.state.linefollow.line_follow_state_module import LineFollow
 from alphabot.follower.state.linefollow.line_follower_algorithm_module import LineFollowingAlgorithm
 from alphabot.follower.pose.pose_detector_module import Pose
-from alphabot.follower.state.state_module import LineFollow, TurnRightAngle
+from alphabot.follower.state.turnrightangle.turn_right_angle_state import TurnRightAngle
 
 
 class TestLineFollowingAlgorithmTest(unittest.TestCase):
