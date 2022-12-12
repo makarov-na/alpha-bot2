@@ -14,7 +14,7 @@ Friendly API implementation for AlphaBot2-Pi KIT
 
 ```python
 
-from alphabot.truck.truck_module import Truck
+from alphabot.bot.truck_module import Truck
 
 # power from -100 to 100
 power = 50
@@ -26,7 +26,7 @@ truck.setTurnPower(0)
 ## Motor control
 
 ```python
-from alphabot.truck.hardware.motor_module import LeftMotor, RightMotor
+from alphabot.bot.hardware.motor_module import LeftMotor, RightMotor
 
 # power from 0 to 100
 power = 50
@@ -42,7 +42,7 @@ right_motor.stop()
 ## Sensors
 
 ```python
-from alphabot.truck.hardware.line_sensor_module import LineSensorsAdc
+from alphabot.bot.hardware.line_sensor_module import LineSensorsAdc
 
 sensors_adc = LineSensorsAdc(gpio)
 all_sensors_values = sensors_adc.readSensors()
@@ -51,7 +51,7 @@ all_sensors_values = sensors_adc.readSensors()
 ## Beeper
 
 ```python
-from alphabot.truck.hardware.beeper_module import Beeper
+from alphabot.bot.hardware.beeper_module import Beeper
 
 beeper = Beeper(gpio)
 beeper.beepOn()
@@ -60,7 +60,7 @@ beeper.beepOff()
 or
 
 ```python
-from alphabot.truck.hardware.beeper_module import Beeper
+from alphabot.bot.hardware.beeper_module import Beeper
 
 beeper = Beeper(gpio)
 time_in_milliseconds = 1000
@@ -70,7 +70,7 @@ beeper.beepOn(time_in_milliseconds)
 ## Led strip
 
 ```python
-from alphabot.truck.hardware import LedStrip
+from alphabot.bot.hardware import LedStrip
 
 strip = LedStrip()
 strip.setPixelColourRgb(0, 255, 0, 0)

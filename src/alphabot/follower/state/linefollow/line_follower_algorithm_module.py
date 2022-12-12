@@ -4,7 +4,7 @@ from alphabot.follower.config_module import LineFollowerConfig
 from alphabot.follower.event.event_module import Event
 from alphabot.follower.state.linefollow.pid_turn_power_calculator_module import PidTurnPowerCalculator
 from alphabot.follower.pose.pose_detector_module import Pose
-from alphabot.truck.truck_module import Truck
+from alphabot.bot.truck_module import Truck
 
 
 class LineFollowingAlgorithm:

@@ -3,7 +3,7 @@ from typing import List
 
 import numpy as np
 
-from alphabot.truck.hardware.line_sensor_module import LineSensor
+from alphabot.bot.hardware.line_sensor_module import LineSensor
 
 
 class LineSensorLevel:
@@ -17,15 +17,6 @@ class LineSensorLevel:
 
     def isSensorOnBlack(self, value):
         return value in self.black_level
-
-
-class LineSensorSoft(LineSensor):
-
-    def __init__(self, line_sensor_hard: LineSensor):
-        self._sensor: LineSensor = LineSensorNormalizer(LineSensorFilter(line_sensor_hard))
-
-    def readSensors(self) -> List:
-        return self._sensor.readSensors()
 
 
 class LineSensorNormalizer(LineSensor):
@@ -82,7 +73,7 @@ class AgvFilter:
         return items_sum / items_count
 
 
-class LineSensorFilter(LineSensor):
+class LineSensorAvgFilter(LineSensor):
 
     def __init__(self, sensor_normalizer: LineSensor, size: int = 3) -> None:
         self._sensor_normalizer = sensor_normalizer

@@ -1,6 +1,6 @@
 import logging
 from alphabot.follower.line_follower_module import LineFollower
-from alphabot.truck.hardware.gpio_module import GpioWrapper
+from alphabot.bot.hardware.gpio_module import GpioWrapper
 
 logging.basicConfig(level=logging.INFO)
 follower = LineFollower(gpio=GpioWrapper())

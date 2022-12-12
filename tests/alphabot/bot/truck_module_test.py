@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock
 
-from alphabot.truck.truck_module import Truck
-from tests.alphabot.truck.hardware.gpio_mock_module import GpioWrapperMock
+from alphabot.bot.truck_module import Truck
+from tests.alphabot.bot.hardware.gpio_mock_module import GpioWrapperMock
 
 
 # logging.basicConfig(level=logging.INFO)

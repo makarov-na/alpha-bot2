@@ -2,7 +2,7 @@ import time
 from typing import List
 
 from abc import ABC, abstractmethod
-from alphabot.truck.hardware.gpio_module import GpioWrapper
+from alphabot.bot.hardware.gpio_module import GpioWrapper
 
 
 # TLC1543 ANALOG-TO-DIGITAL CONVERTER

@@ -1,7 +1,7 @@
 from collections import deque
 from enum import Enum, Flag, auto
 
-from alphabot.truck.line_sensor_module import LineSensorLevel
+from alphabot.bot.line_sensor_module import LineSensorLevel
 
 
 class SensorStatus(Enum):

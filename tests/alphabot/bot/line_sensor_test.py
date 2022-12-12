@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, Mock
 
-from alphabot.truck.line_sensor_module import LineSensorNormalizer, AgvFilter, LineSensorFilter
-from alphabot.truck.hardware.line_sensor_module import LineSensor
+from alphabot.bot.line_sensor_module import LineSensorNormalizer, AgvFilter, LineSensorAvgFilter
+from alphabot.bot.hardware.line_sensor_module import LineSensor
 
 
 class TestLineSensorFilter(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestLineSensorFilter(unittest.TestCase):
         line_sensor = MagicMock()
         line_sensor.readSensors = Mock()
         line_sensor.readSensors.side_effect = [[400, 200, 400, 244, 666], [0, 0, 0, 0, 0]]
-        line_sensor_filter: LineSensor = LineSensorFilter(line_sensor, 3)
+        line_sensor_filter: LineSensor = LineSensorAvgFilter(line_sensor, 3)
 
         # WHEN
         line_sensor_filter.readSensors()
