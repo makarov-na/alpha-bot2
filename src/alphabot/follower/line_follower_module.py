@@ -23,7 +23,7 @@ class LineFollower:
 
     def startFollowing(self):
         while self._keep_following:
-            all_sensors_values = self._bot.sensor.readSensors()
+            all_sensors_values = self._bot.line_sensor.readSensors()
             event = Event(self._pose_detector.getCurrentPose(all_sensors_values), all_sensors_values)
             self._current_state = self._current_state.doAction(event)
             self._sendTelemetry(event.sensor_values)

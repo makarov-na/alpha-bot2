@@ -8,4 +8,4 @@ class Bot:
 
     def __init__(self, gpio: GpioWrapper = None) -> None:
         self.truck: Truck = Truck(gpio)
-        self.sensor: LineSensor = LineSensorNormalizer(LineSensorAvgFilter(LineSensorsAdc(gpio)))
+        self.line_sensor: LineSensor = LineSensorNormalizer(LineSensorAvgFilter(LineSensorsAdc(gpio)))
