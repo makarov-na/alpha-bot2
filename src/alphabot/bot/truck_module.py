@@ -6,7 +6,7 @@ import logging
 
 
 class Truck:
-    STOP_POWER_FACTOR = 2.35
+    STOP_POWER_FACTOR = 2
     POWER_STOP_DURATION = 0.15
 
     def __init__(self, gpio: GpioWrapper = None, left_motor: Motor = None, right_motor: Motor = None) -> None:

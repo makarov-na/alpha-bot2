@@ -11,7 +11,7 @@ class TurnRightAngle(State):
     def __init__(self, truck: Truck) -> None:
         self._truck = truck
         self._start_pose = None
-        self._turn_power = 20
+        self._turn_power = 40
 
     def doAction(self, event: Event) -> State:
         if self._start_pose is None:
