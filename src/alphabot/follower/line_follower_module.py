@@ -5,7 +5,7 @@ from alphabot.bot.bot_module import Bot
 from alphabot.bot.hardware.gpio_module import GpioWrapper
 from alphabot.follower.config_module import LineFollowerConfig
 from alphabot.follower.event.event_module import Event
-from alphabot.follower.pose.pose_detector_module import PoseDetector
+from alphabot.follower.pose.pose_detector_module import PoseDetector, Pose
 from alphabot.follower.state.init.init_state_module import Init
 from alphabot.telemetry.telemetry_module import Telemetry
 
@@ -25,10 +25,15 @@ class LineFollower:
         while self._keep_following:
             all_sensors_values = self._bot.line_sensor.readSensors()
             event = Event(self._pose_detector.getCurrentPose(all_sensors_values), all_sensors_values)
+            if event.pose == Pose.ON_T_INTERSECTION:
+                event.pose = self._chooseTurn()
             self._current_state = self._current_state.doAction(event)
             self._sendTelemetry(event.sensor_values)
             time.sleep(self._main_loop_sleep_time)
             self._logger.info("current state = {} event = {}".format(self._current_state, event))
+
+    def _chooseTurn(self):
+        return Pose.ON_RIGHT_TURN
 
     def _sendTelemetry(self, all_sensors_values):
         self._telemetry.send(

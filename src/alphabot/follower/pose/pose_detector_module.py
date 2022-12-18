@@ -11,6 +11,7 @@ class SensorStatus(Enum):
 
 
 class Pose(Flag):
+    ON_T_INTERSECTION = auto()
     OUT_OF_LINE = auto()
     ON_LINE_WITH_TREE_CENTRAL_SENSORS = auto()
     ON_LINE_WITH_CENTRAL_SENSOR = auto()
@@ -31,6 +32,10 @@ class PoseDetector:
         self._right_turn_pattern = [[SensorStatus.WHITE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.MIDDLE],
                                     [SensorStatus.WHITE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.MIDDLE],
                                     [SensorStatus.WHITE, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK]]
+
+        self._t_intersection_pattern = [[SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK],
+                                        [SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK],
+                                        [SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK]]
         self._current_state = deque(maxlen=3)
         self._current_state_raw = deque(maxlen=3)
 
@@ -42,6 +47,8 @@ class PoseDetector:
             return Pose.ON_LEFT_TURN
         elif self._isBotOnRightTurn():
             return Pose.ON_RIGHT_TURN
+        elif self._isBotOnTIntersection():
+            return Pose.ON_T_INTERSECTION
         elif self._isBotOnlineWithTreCentralSensors():
             return Pose.ON_LINE_WITH_TREE_CENTRAL_SENSORS
         elif self._isBotOnlineWithCentralSensor():
@@ -113,3 +120,8 @@ class PoseDetector:
         if self._sensor_level.isSensorOnWhite(curr_value):
             return SensorStatus.WHITE
         return SensorStatus.MIDDLE
+
+    def _isBotOnTIntersection(self):
+        if self._t_intersection_pattern == list(self._current_state):
+            return True
+        return False
