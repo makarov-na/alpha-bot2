@@ -20,7 +20,6 @@ class Truck:
             self._right_motor = RightMotor(gpio)
         else:
             self._right_motor = right_motor
-        self._right_motor = right_motor
         self._speed_power = 0
         self._rotation_power = 0
 
