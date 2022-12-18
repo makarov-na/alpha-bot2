@@ -28,6 +28,7 @@ class LineFollower:
             self._current_state = self._current_state.doAction(event)
             self._sendTelemetry(event.sensor_values)
             time.sleep(self._main_loop_sleep_time)
+            self._logger.info("current state = {} event = {}".format(self._current_state, event))
 
     def _sendTelemetry(self, all_sensors_values):
         self._telemetry.send(

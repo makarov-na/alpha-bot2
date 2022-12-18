@@ -5,5 +5,5 @@ from alphabot.bot.hardware.gpio_module import GpioWrapper
 logging.basicConfig(level=logging.INFO)
 follower = LineFollower(gpio=GpioWrapper())
 follower.logger.setLevel(level=logging.INFO)
-# logging.getLogger('alphabot.truck_module').setLevel(level=logging.ERROR)
+logging.getLogger('alphabot.bot.truck_module').setLevel(level=logging.ERROR)
 follower.startFollowing()

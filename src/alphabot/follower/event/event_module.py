@@ -9,3 +9,6 @@ class Event:
         self.pose = pose
         self.time_ns = time.time_ns()
         self.sensor_values = sensor_values
+
+    def __str__(self) -> str:
+        return "Pose {} values {}".format(self.pose, self.sensor_values)
