@@ -47,6 +47,20 @@ class Truck:
         self._waitForPowerStop()
         self.stop()
 
+    def powerStopRight(self):
+        power = self._speed_power * Truck.STOP_POWER_FACTOR
+        self.stop()
+        self._right_motor.backward(power)
+        self._waitForPowerStop()
+        self.stop()
+
+    def powerStopLeft(self):
+        power = self._speed_power * Truck.STOP_POWER_FACTOR
+        self.stop()
+        self._left_motor.backward(power)
+        self._waitForPowerStop()
+        self.stop()
+
     def _waitForPowerStop(self):
         # TODO make duration calculation based on current speed
         time.sleep(Truck.POWER_STOP_DURATION)

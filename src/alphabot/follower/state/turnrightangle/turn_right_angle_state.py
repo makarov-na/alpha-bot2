@@ -16,7 +16,10 @@ class TurnRightAngle(State):
     def doAction(self, event: Event) -> State:
         if self._start_pose is None:
             self._start_pose = event.pose
-            self._truck.powerStop()
+            if self._start_pose == Pose.ON_RIGHT_TURN:
+                self._truck.powerStopRight()
+            else:
+                self._truck.powerStopLeft()
         if event.pose == Pose.OUT_OF_LINE:
             return self._createLineSearch(event)
         if event.pose == Pose.ON_LINE_WITH_CENTRAL_SENSOR:
