@@ -38,6 +38,7 @@ class PoseDetector:
                                         [SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK, SensorStatus.BLACK]]
         self._current_state = deque(maxlen=3)
         self._current_state_raw = deque(maxlen=3)
+        self._last_on_line_state = None
 
     def getCurrentPose(self, all_sensors_values) -> Pose:
         self._appendSensorValues(all_sensors_values)
@@ -63,6 +64,8 @@ class PoseDetector:
             current_line.append(self._getStatus(curr_value))
         self._current_state_raw.append(all_sensors_values)
         self._current_state.append(current_line)
+        if self._current_state.count(SensorStatus.BLACK) > 0:
+            self._last_on_line_state = self._current_state
 
     def _isBotOnLeftTurn(self):
         if self._left_turn_pattern == list(self._current_state):
@@ -125,3 +128,6 @@ class PoseDetector:
         if self._t_intersection_pattern == list(self._current_state):
             return True
         return False
+
+    def get_last_on_line_state(self):
+        return self._last_on_line_state

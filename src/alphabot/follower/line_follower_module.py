@@ -24,9 +24,13 @@ class LineFollower:
     def startFollowing(self):
         while self._keep_following:
             all_sensors_values = self._bot.line_sensor.readSensors()
-            event = Event(self._pose_detector.getCurrentPose(all_sensors_values), all_sensors_values)
-            if event.pose == Pose.ON_T_INTERSECTION:
-                event.pose = self._chooseTurn()
+            pose = self._pose_detector.getCurrentPose(all_sensors_values)
+            if pose == Pose.ON_T_INTERSECTION:
+                event = Event(self._chooseTurn(), all_sensors_values)
+            elif pose == Pose.OUT_OF_LINE:
+                event = Event(pose, all_sensors_values, self._pose_detector.get_last_on_line_state())
+            else:
+                event = Event(pose, all_sensors_values)
             self._current_state = self._current_state.doAction(event)
             self._sendTelemetry(event.sensor_values)
             time.sleep(self._main_loop_sleep_time)

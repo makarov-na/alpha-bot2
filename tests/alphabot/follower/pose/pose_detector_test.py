@@ -2,7 +2,7 @@ import time
 import unittest
 from unittest.mock import MagicMock
 
-from alphabot.follower.pose.pose_detector_module import PoseDetector
+from alphabot.follower.pose.pose_detector_module import PoseDetector, Pose, SensorStatus
 
 
 class TestAngleDetector(unittest.TestCase):
@@ -133,4 +133,16 @@ class TestAngleDetector(unittest.TestCase):
         # THEN
         self.assertFalse(result)
 
+    def test_last_on_line_state(self):
+        # GIVEN
+        pose_detector = PoseDetector()
+        all_sensor_values_on_line = [0, 100, 100, 100, 100]
+        pose_detector.getCurrentPose(all_sensor_values_on_line)
 
+        # WHEN
+        pose = pose_detector.getCurrentPose([100, 100, 100, 100, 100])
+        last_on_line_state = pose_detector.get_last_on_line_state()
+
+        # THEN
+        self.assertEqual(Pose.OUT_OF_LINE, pose)
+        self.assertTrue([SensorStatus.BLACK, SensorStatus.WHITE, SensorStatus.WHITE, SensorStatus.WHITE, SensorStatus.WHITE], last_on_line_state)

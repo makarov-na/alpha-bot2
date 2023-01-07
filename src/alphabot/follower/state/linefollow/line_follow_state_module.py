@@ -15,8 +15,11 @@ class LineFollow(State):
 
     def doAction(self, event: Event) -> State:
         if event.pose == Pose.OUT_OF_LINE:
-            return lnsm.LineSearch(self._truck).doAction(event)
+            return self._createLineSearchState(event)
         if event.pose in [Pose.ON_RIGHT_TURN, Pose.ON_LEFT_TURN]:
             return trnm.TurnRightAngle(self._truck).doAction(event)
         self._algorithm.doAction(event)
         return self
+
+    def _createLineSearchState(self, event):
+        return lnsm.LineSearch(self._truck).doAction(event)

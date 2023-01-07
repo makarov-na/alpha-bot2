@@ -17,6 +17,7 @@ class TestState(unittest.TestCase):
         state._truck = MagicMock()
         state._truck.powerStop = MagicMock()
         state._truck.setTurnPower = MagicMock()
+        state._createLineFollowerState = MagicMock()
 
         # WHEN
         outState = state.doAction(Event(Pose.OUT_OF_LINE, []))

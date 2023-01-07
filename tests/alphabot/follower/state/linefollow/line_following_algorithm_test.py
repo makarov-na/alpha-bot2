@@ -40,6 +40,8 @@ class TestLineFollowingAlgorithmTest(unittest.TestCase):
         line_follower._correctCourse = MagicMock()
         line_follower._sendTelemetry = MagicMock()
         line_follower._handleBotIsOnRightCorner = MagicMock()
+        state._createLineSearchState = MagicMock()
+
         event = Event(Pose.OUT_OF_LINE, [100, 100, 100, 100, 100])
 
         # WHEN
