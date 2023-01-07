@@ -10,9 +10,9 @@ class TestState(unittest.TestCase):
 
     def test_turn_right_angle_state_out_of_line(self):
         # GIVEN
-        track = MagicMock()
-        track.stop = MagicMock()
-        state = TurnRightAngle(track)
+        truck = MagicMock()
+        truck.stop = MagicMock()
+        state = TurnRightAngle(truck)
         state._createLineSearch = MagicMock()
         state._createLineSearch.return_value = MagicMock()
 
@@ -21,13 +21,13 @@ class TestState(unittest.TestCase):
 
         # THEN
         self.assertEqual(outState, state._createLineSearch.return_value)
-        track.powerStop.assert_called_once()
+        truck.powerStopLeft.assert_called_once()
 
     def test_turn_right_angle_state_on_line(self):
         # GIVEN
-        track = MagicMock()
-        track.stop = MagicMock()
-        state = TurnRightAngle(track)
+        truck = MagicMock()
+        truck.stop = MagicMock()
+        state = TurnRightAngle(truck)
         state._createLineFollow = MagicMock()
         state._createLineFollow.return_value = MagicMock()
 
@@ -36,4 +36,4 @@ class TestState(unittest.TestCase):
 
         # THEN
         self.assertEqual(outState, state._createLineFollow.return_value)
-        track.powerStop.assert_called_once()
+        truck.powerStopLeft.assert_called_once()
