@@ -30,6 +30,7 @@ class TestState(unittest.TestCase):
         state = TurnRightAngle(truck)
         state._createLineFollow = MagicMock()
         state._createLineFollow.return_value = MagicMock()
+        state._init_time_ns = 0
 
         # WHEN
         outState = state.doAction(Event(Pose.ON_LINE_WITH_CENTRAL_SENSOR, [100, 0, 0, 0, 100]))
