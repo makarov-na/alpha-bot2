@@ -10,7 +10,7 @@ import alphabot.follower.state.linefollow.line_follow_state_module as lfm
 
 class LineSearch(State):
     ACTION_TIMEOUT_SEC = 5
-    TURN_POWER = 40
+    TURN_POWER = 60
 
     def __init__(self, truck: Truck) -> None:
         self._truck = truck

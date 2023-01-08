@@ -7,7 +7,8 @@ import logging
 
 class Truck:
     STOP_POWER_FACTOR = 2
-    POWER_STOP_DURATION = 0.15
+    STOP_POWER_ONE_WHEEL_FACTOR = 2.5
+    POWER_STOP_DURATION = 0.2
 
     def __init__(self, gpio: GpioWrapper = None, left_motor: Motor = None, right_motor: Motor = None) -> None:
         self._logger = logging.getLogger(__name__)
@@ -42,20 +43,28 @@ class Truck:
 
     def powerStop(self):
         self._rotation_power = 0
-        self._speed_power = -self._speed_power * Truck.STOP_POWER_FACTOR
+        if self._speed_power * Truck.STOP_POWER_FACTOR <= Motor.MAX_VALUE:
+            self._speed_power = -abs(self._speed_power) * Truck.STOP_POWER_FACTOR
+        else:
+            self._speed_power = - Motor.MAX_VALUE
+
         self._sendOutputToMotors()
         self._waitForPowerStop()
         self.stop()
 
     def powerStopRight(self):
-        power = self._speed_power * Truck.STOP_POWER_FACTOR
+        power = self._speed_power * Truck.STOP_POWER_ONE_WHEEL_FACTOR
+        if power > Motor.MAX_VALUE:
+            power = Motor.MAX_VALUE
         self.stop()
         self._right_motor.backward(power)
         self._waitForPowerStop()
         self.stop()
 
     def powerStopLeft(self):
-        power = self._speed_power * Truck.STOP_POWER_FACTOR
+        power = self._speed_power * Truck.STOP_POWER_ONE_WHEEL_FACTOR
+        if power > Motor.MAX_VALUE:
+            power = Motor.MAX_VALUE
         self.stop()
         self._left_motor.backward(power)
         self._waitForPowerStop()
