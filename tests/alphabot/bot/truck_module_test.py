@@ -227,7 +227,7 @@ class TestTruck(unittest.TestCase):
         truck = Truck(left_motor=left_motor_mock, right_motor=right_motor_mock)
 
         # WHEN
-        truck.stop()
+        truck._motorsOff()
 
         # THEN
         left_motor_mock.stop.assert_called()
@@ -242,7 +242,7 @@ class TestTruck(unittest.TestCase):
         truck._waitForPowerStop = MagicMock
 
         # WHEN
-        truck.powerStop()
+        truck.stop()
 
         # THEN
         left_motor_mock.backward.assert_called()

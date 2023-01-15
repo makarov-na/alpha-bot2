@@ -5,6 +5,7 @@ from alphabot.follower.state.base_state_module import State
 import alphabot.follower.state.linefollow.line_follow_state_module as lnfm
 import alphabot.follower.state.linesearch.line_search_state_module as lnsm
 
+
 class Init(State):
 
     def __init__(self, truck: Truck) -> None:

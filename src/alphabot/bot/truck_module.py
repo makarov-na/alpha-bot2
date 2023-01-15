@@ -36,12 +36,12 @@ class Truck:
         self._rotation_power = turn_power
         self._sendOutputToMotors()
 
-    def stop(self):
+    def _motorsOff(self):
         self._rotation_power = 0
         self._speed_power = 0
         self._sendOutputToMotors()
 
-    def powerStop(self):
+    def stop(self):
         self._rotation_power = 0
         if self._speed_power * Truck.STOP_POWER_FACTOR <= Motor.MAX_VALUE:
             self._speed_power = -abs(self._speed_power) * Truck.STOP_POWER_FACTOR
@@ -50,25 +50,25 @@ class Truck:
 
         self._sendOutputToMotors()
         self._waitForPowerStop()
-        self.stop()
+        self._motorsOff()
 
     def powerStopRight(self):
         power = self._speed_power * Truck.STOP_POWER_ONE_WHEEL_FACTOR
         if power > Motor.MAX_VALUE:
             power = Motor.MAX_VALUE
-        self.stop()
+        self._motorsOff()
         self._right_motor.backward(power)
         self._waitForPowerStop()
-        self.stop()
+        self._motorsOff()
 
     def powerStopLeft(self):
         power = self._speed_power * Truck.STOP_POWER_ONE_WHEEL_FACTOR
         if power > Motor.MAX_VALUE:
             power = Motor.MAX_VALUE
-        self.stop()
+        self._motorsOff()
         self._left_motor.backward(power)
         self._waitForPowerStop()
-        self.stop()
+        self._motorsOff()
 
     def _waitForPowerStop(self):
         # TODO make duration calculation based on current speed

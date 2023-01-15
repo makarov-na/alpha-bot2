@@ -19,7 +19,7 @@ class LineSearch(State):
 
     def doAction(self, event: Event) -> State:
         if self._init_time is None:
-            self._truck.powerStop()
+            self._truck.stop()
             self._init_time = time.time()
             if event.last_on_line_state is not None:
                 self._last_on_line_state = event.last_on_line_state
