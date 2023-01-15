@@ -36,11 +36,6 @@ class Truck:
         self._rotation_power = turn_power
         self._sendOutputToMotors()
 
-    def _motorsOff(self):
-        self._rotation_power = 0
-        self._speed_power = 0
-        self._sendOutputToMotors()
-
     def stop(self):
         self._rotation_power = 0
         if self._speed_power * Truck.STOP_POWER_FACTOR <= Motor.MAX_VALUE:
@@ -70,10 +65,6 @@ class Truck:
         self._waitForPowerStop()
         self._motorsOff()
 
-    def _waitForPowerStop(self):
-        # TODO make duration calculation based on current speed
-        time.sleep(Truck.POWER_STOP_DURATION)
-
     def rotateAroundRightWheel(self, turn_power):
         self._right_motor.stop()
         self._left_motor.forward(turn_power)
@@ -81,6 +72,21 @@ class Truck:
     def rotateAroundLeftWheel(self, turn_power):
         self._left_motor.stop()
         self._right_motor.forward(turn_power)
+
+    def getSpeedPower(self):
+        return self._speed_power
+
+    def getTurnPower(self):
+        return self._rotation_power
+
+    def _motorsOff(self):
+        self._rotation_power = 0
+        self._speed_power = 0
+        self._sendOutputToMotors()
+
+    def _waitForPowerStop(self):
+        # TODO make duration calculation based on current speed
+        time.sleep(Truck.POWER_STOP_DURATION)
 
     def _sendOutputToMotors(self):
 
@@ -138,8 +144,4 @@ class Truck:
     def _swapValues(self, left_motor_power, right_motor_power):
         return right_motor_power, left_motor_power
 
-    def getSpeedPower(self):
-        return self._speed_power
 
-    def getTurnPower(self):
-        return self._rotation_power
