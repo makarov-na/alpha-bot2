@@ -10,3 +10,8 @@ class FrontalInfraredSensor:
         self.gpio.setup(self._leftSensorPin, gpio.IN, gpio.PUD_UP)
         self.gpio.setup(self._rightSensorPin, gpio.IN, gpio.PUD_UP)
 
+    def isObstacleInFrontOfLeftSensor(self):
+        return self.gpio.input(self._leftSensorPin)
+
+    def isObstacleInFrontOfRightSensor(self):
+        return self.gpio.input(self._rightSensorPin)
