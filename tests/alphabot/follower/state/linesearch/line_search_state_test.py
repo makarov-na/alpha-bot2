@@ -15,7 +15,7 @@ class TestState(unittest.TestCase):
         # GIVEN
         state = LineSearch(MagicMock())
         state._truck = MagicMock()
-        state._truck.powerStop = MagicMock()
+        state._truck.stop = MagicMock()
         state._truck.setTurnPower = MagicMock()
         state._createLineFollowerState = MagicMock()
 
@@ -25,7 +25,7 @@ class TestState(unittest.TestCase):
 
         # THEN
         self.assertEqual(outState, state)
-        state._truck.powerStop.assert_called_once()
+        state._truck.stop.assert_called_once()
         state._truck.setTurnPower.assert_has_calls([call(state.TURN_POWER), call(state.TURN_POWER)])
 
     def test_search_line_after_timeout_out_of_line(self):
