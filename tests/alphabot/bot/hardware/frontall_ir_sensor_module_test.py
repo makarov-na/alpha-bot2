@@ -23,7 +23,7 @@ class TestInfraredSensor(unittest.TestCase):
         gpio = GpioWrapperMock()
         gpio.setup = MagicMock()
         gpio.input = MagicMock()
-        gpio.input.return_value = 1
+        gpio.input.return_value = 0
         sensor = FrontalInfraredSensor(gpio)
 
         # WHEN
@@ -38,7 +38,7 @@ class TestInfraredSensor(unittest.TestCase):
         gpio = GpioWrapperMock()
         gpio.setup = MagicMock()
         gpio.input = MagicMock()
-        gpio.input.return_value = 0
+        gpio.input.return_value = 1
         sensor = FrontalInfraredSensor(gpio)
 
         # WHEN
@@ -53,7 +53,7 @@ class TestInfraredSensor(unittest.TestCase):
         gpio = GpioWrapperMock()
         gpio.setup = MagicMock()
         gpio.input = MagicMock()
-        gpio.input.return_value = 1
+        gpio.input.return_value = 0
         sensor = FrontalInfraredSensor(gpio)
 
         # WHEN
@@ -68,7 +68,7 @@ class TestInfraredSensor(unittest.TestCase):
         gpio = GpioWrapperMock()
         gpio.setup = MagicMock()
         gpio.input = MagicMock()
-        gpio.input.return_value = 0
+        gpio.input.return_value = 1
         sensor = FrontalInfraredSensor(gpio)
 
         # WHEN
