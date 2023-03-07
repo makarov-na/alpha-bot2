@@ -1,4 +1,7 @@
-class GpioWrapperMock:
+from alphabot.bot.hardware.gpio_module import GpioWrapper
+
+
+class GpioWrapperMock(GpioWrapper):
 
     def __init__(self):
         self.LOW = 0
