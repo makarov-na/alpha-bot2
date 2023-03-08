@@ -23,12 +23,14 @@ class CameraServo:
             self.controller = controller
         self.controller.setPWMFreqHz(CameraServo.SERVO_MOTOR_PWM_PERIOD_HZ)
 
-    def horizontal_position(self, degree):
+    def setHorizontalPosition(self, degree):
+        """Zero position is straight ahead. Clockwise angle is positive. Anticlockwise angle is negative"""
         assert -45 <= degree <= 45, "Horizontal position must be between -45 and 45"
         pwm_end = CameraServo.HORIZONTAL_ZERO_PWM - round(degree * CameraServo.__DEGREE_TO_PWM_COEFFICIENT)
         self.controller.setPWM(CameraServo.HORIZONTAL_SERVO_CHANNEL, 0, pwm_end)
 
-    def vertical_position(self, degree):
+    def setVerticalPosition(self, degree):
+        """Zero position is straight ahead. Upper angle is positive. Down angle is negative"""
         assert -45 <= degree <= 45, "Vertical position must be between -45 and 45"
         pwm_end = CameraServo.VERTICAL_ZERO_PWM - round(degree * CameraServo.__DEGREE_TO_PWM_COEFFICIENT)
         self.controller.setPWM(CameraServo.VERTICAL_SERVO_CHANNEL, 0, pwm_end)

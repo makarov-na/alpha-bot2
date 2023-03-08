@@ -11,7 +11,7 @@ class MyTestCase(unittest.TestCase):
         servo = CameraServo(MagicMock())
 
         # WHEN
-        servo.horizontal_position(-45)
+        servo.setHorizontalPosition(-45)
 
         # THEN
 
@@ -20,7 +20,7 @@ class MyTestCase(unittest.TestCase):
         servo = CameraServo(MagicMock())
 
         # WHEN
-        servo.horizontal_position(45)
+        servo.setHorizontalPosition(45)
 
         # THEN
 
@@ -30,7 +30,7 @@ class MyTestCase(unittest.TestCase):
 
         # WHEN
         with self.assertRaises(AssertionError) as error:
-            servo.vertical_position(-46)
+            servo.setVerticalPosition(-46)
 
         # THEN
         self.assertEqual("Vertical position must be between -45 and 45", str(error.exception))
@@ -41,7 +41,7 @@ class MyTestCase(unittest.TestCase):
 
         # WHEN
         with self.assertRaises(AssertionError) as error:
-            servo.vertical_position(46)
+            servo.setVerticalPosition(46)
 
         # THEN
         self.assertEqual("Vertical position must be between -45 and 45", str(error.exception))
@@ -52,7 +52,7 @@ class MyTestCase(unittest.TestCase):
 
         # WHEN
         with self.assertRaises(AssertionError) as error:
-            servo.horizontal_position(-91)
+            servo.setHorizontalPosition(-91)
 
         # THEN
         self.assertEqual("Horizontal position must be between -45 and 45", str(error.exception))
@@ -63,7 +63,7 @@ class MyTestCase(unittest.TestCase):
 
         # WHEN
         with self.assertRaises(AssertionError) as error:
-            servo.horizontal_position(91)
+            servo.setHorizontalPosition(91)
 
         # THEN
         self.assertEqual("Horizontal position must be between -45 and 45", str(error.exception))

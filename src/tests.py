@@ -11,11 +11,10 @@ logging.basicConfig(level=logging.INFO)
 
 servo = CameraServo()
 
-while True:
-    for i in np.arange(0, 6.28, 0.1):
-        servo.vertical_position(45 * sin(i))
-        servo.horizontal_position(45 * cos(i))
-        print(45 * sin(i))
-        time.sleep(0.1)
+for j in range(1, 4, 1):
+    for i in np.arange(0, 6.28, 0.01):
+        servo.setVerticalPosition(45 * sin(i))
+        servo.setHorizontalPosition(45 * cos(i))
+        time.sleep(0.01)
 
-servo.stop_servo()
+servo.stop_servos()

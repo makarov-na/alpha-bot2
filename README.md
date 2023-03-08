@@ -2,6 +2,7 @@
 
 Friendly API implementation for AlphaBot2-Pi KIT [(View on Youtube)](https://www.youtube.com/playlist?list=PLKxQTQ3TZlLE8VYpjXAgBHHr27JPiKOji)
 
+* Camera position control
 * Motors power control with frequency width modulation
 * Line sensors analog to digital converter TLC1543 control
 * Led strip WS2812B control
@@ -10,6 +11,21 @@ Friendly API implementation for AlphaBot2-Pi KIT [(View on Youtube)](https://www
 
 
 # Usage
+
+## Camera position control
+
+```python
+
+from alphabot.bot.hardware.camera_module import CameraServo
+
+# angle from -45 to 45
+vertical_angle = 0
+horizontal_angle = 45
+camera_servo = CameraServo()
+camera_servo.setVerticalPosition(vertical_angle)
+camera_servo.setHorizontalPosition(horizontal_angle)
+
+```
 
 ## Truck control
 
