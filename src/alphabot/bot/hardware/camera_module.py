@@ -25,14 +25,15 @@ class CameraServo:
 
     def horizontal_position(self, degree):
         assert -45 <= degree <= 45, "Horizontal position must be between -45 and 45"
-        self.controller.setPWM(CameraServo.HORIZONTAL_SERVO_CHANNEL, 0, CameraServo.HORIZONTAL_ZERO_PWM - round(degree * CameraServo.__DEGREE_TO_PWM_COEFFICIENT))
+        pwm_end = CameraServo.HORIZONTAL_ZERO_PWM - round(degree * CameraServo.__DEGREE_TO_PWM_COEFFICIENT)
+        self.controller.setPWM(CameraServo.HORIZONTAL_SERVO_CHANNEL, 0, pwm_end)
 
     def vertical_position(self, degree):
         assert -45 <= degree <= 45, "Vertical position must be between -45 and 45"
-        self.controller.setPWM(CameraServo.VERTICAL_SERVO_CHANNEL, 0, CameraServo.VERTICAL_ZERO_PWM - round(degree * CameraServo.__DEGREE_TO_PWM_COEFFICIENT))
+        pwm_end = CameraServo.VERTICAL_ZERO_PWM - round(degree * CameraServo.__DEGREE_TO_PWM_COEFFICIENT)
+        self.controller.setPWM(CameraServo.VERTICAL_SERVO_CHANNEL, 0, pwm_end)
 
     def stop_servos(self):
-
         self.controller.setPWM(0, PCA9685.MAX_PWM_VALUE, 0)
         self.controller.setPWM(1, PCA9685.MAX_PWM_VALUE, 0)
 
