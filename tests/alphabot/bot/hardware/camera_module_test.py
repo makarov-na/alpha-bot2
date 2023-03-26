@@ -4,25 +4,23 @@ from unittest.mock import MagicMock
 from alphabot.bot.hardware.camera_module import CameraServo
 
 
-class MyTestCase(unittest.TestCase):
+class CameraServoTest(unittest.TestCase):
 
     def test_left_turn_45(self):
         # GIVEN
         servo = CameraServo(MagicMock())
 
         # WHEN
-        servo.setHorizontalPosition(-45)
-
         # THEN
+        servo.setHorizontalPosition(-45)
 
     def test_right_turn_45(self):
         # GIVEN
         servo = CameraServo(MagicMock())
 
         # WHEN
-        servo.setHorizontalPosition(45)
-
         # THEN
+        servo.setHorizontalPosition(45)
 
     def test_up_more_than_45(self):
         # GIVEN
