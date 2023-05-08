@@ -1,10 +1,8 @@
-from typing import List
-
+from alphabot.bot.truck_module import Truck
 from alphabot.follower.config_module import LineFollowerConfig
 from alphabot.follower.event.event_module import Event
-from alphabot.follower.state.linefollow.pid_turn_power_calculator_module import PidTurnPowerCalculator
 from alphabot.follower.pose.pose_detector_module import Pose
-from alphabot.bot.truck_module import Truck
+from alphabot.follower.state.linefollow.pid_turn_power_calculator_module import PidTurnPowerCalculator
 
 
 class LineFollowingAlgorithm:
@@ -22,11 +20,12 @@ class LineFollowingAlgorithm:
             self._bot_truck.setSpeedPower(self._speed_power)
         elif event.pose == Pose.ON_LINE_WITHOUT_CENTRAL_SENSOR:
             self._bot_truck.setSpeedPower(0)
-        self._correctCourse(event.sensor_values, self._calculate_delta_time_ms(event.time_ns))
+        self._correctCourse(event, self._calculate_delta_time_ms(event.time_ns))
 
-    def _correctCourse(self, all_sensors_values: List, delta_time):
-        self._pid_turn_power_calculator.calculateTurnPower(delta_time, all_sensors_values)
-        if self._isBotRightToTheLine(all_sensors_values):
+    def _correctCourse(self, event: Event, delta_time):
+        left_value, right_value = self._calculateValuesBySensors(event.sensor_values)
+        self._pid_turn_power_calculator.calculateTurnPower(delta_time, left_value, right_value)
+        if self._isBotRightToTheLine(event.sensor_values):
             self._bot_truck.setTurnPower(self._pid_turn_power_calculator.getRightPidOut())
         else:
             self._bot_truck.setTurnPower(self._pid_turn_power_calculator.getLeftPidOut())
@@ -39,7 +38,7 @@ class LineFollowingAlgorithm:
     def getTelemetryData(self):
         return self._pid_turn_power_calculator.getTelemetryData()
 
-    def _calculate_delta_time_ms(self, current_time_ns):
+    def _calculate_delta_time_ms(self, current_time_ns: int) -> int:
         if self._prevent_time_ns is None:
             self._prevent_time_ms = current_time_ns
             return 1
@@ -47,3 +46,9 @@ class LineFollowingAlgorithm:
         self._prevent_time_ns = current_time_ns
         delta_time_ms = delta_time_ns / 1_000_000
         return delta_time_ms
+
+    def _calculateValuesBySensors(self, all_sensors_values):
+        left_value_three_sensors = all_sensors_values[1] + all_sensors_values[2] + 100 - all_sensors_values[0]
+        right_value_three_sensors = all_sensors_values[3] + all_sensors_values[2] + 100 - all_sensors_values[4]
+        return left_value_three_sensors, right_value_three_sensors
+

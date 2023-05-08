@@ -1,5 +1,3 @@
-from typing import List
-
 from alphabot.follower.state.linefollow.pid_module import PidController
 
 
@@ -11,9 +9,7 @@ class PidTurnPowerCalculator:
         self._left_sensor_pid_out = None
         self._right_sensor_pid_out = None
 
-    def calculateTurnPower(self, delta_time: float, all_sensors_values: List) -> None:
-        left_value_three_sensors = all_sensors_values[1] + all_sensors_values[2] + 100 - all_sensors_values[0]
-        right_value_three_sensors = all_sensors_values[3] + all_sensors_values[2] + 100 - all_sensors_values[4]
+    def calculateTurnPower(self, delta_time: float, left_value_three_sensors, right_value_three_sensors) -> None:
         self._left_sensor_pid_out = self._left_sensor_pid.getOutput(left_value_three_sensors, delta_time)
         self._right_sensor_pid_out = self._right_sensor_pid.getOutput(right_value_three_sensors, delta_time)
 
