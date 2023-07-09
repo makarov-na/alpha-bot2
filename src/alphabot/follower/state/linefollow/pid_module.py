@@ -1,6 +1,9 @@
 class PidController(object):
 
     def __init__(self, kp, ki, kd, target_value, max_out) -> None:
+
+        # TODO move out _MIN_ERROR configuration
+        self._MIN_ERROR = 10
         self._max_out = max_out
         self._max_integral_out = max_out
         self._kp = kp
@@ -36,7 +39,7 @@ class PidController(object):
         return self._kp * error
 
     def _calculateIntegralOutput(self, error, delta_time):
-        if error == 0:
+        if abs(error) < self._MIN_ERROR:
             self._integral_value = 0
         sign = 1
         if self._prevent_error is not None and error - self._prevent_error != 0:

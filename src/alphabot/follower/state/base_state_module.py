@@ -8,3 +8,6 @@ class State:
 
     def __str__(self) -> str:
         return str(self.__class__).split(".").pop()[:-2]
+
+    def getTelemetryData(self):
+        return {}

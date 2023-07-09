@@ -23,3 +23,6 @@ class LineFollow(State):
 
     def _createLineSearchState(self, event):
         return lnsm.LineSearch(self._truck).doAction(event)
+
+    def getTelemetryData(self):
+        return self._algorithm.getTelemetryData()

@@ -73,9 +73,8 @@ class LineFollower:
         )
 
     def get_pid_data(self):
-        # TODO real pid data
-        # return self._line_following_algorithm.getTelemetryData()
-        return ''
+        return self._current_state.getTelemetryData()
+
 
     @property
     def logger(self):
