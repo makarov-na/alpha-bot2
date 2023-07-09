@@ -11,3 +11,4 @@ class LineFollowerConfig:
         self.SLEEP_TIME = microsecond * 10
         self.TARGET_VALUE_LEFT = 0
         self.TARGET_VALUE_RIGHT = 0
+        self.USE_CAMERA_COURSE_CORRECTION = False

@@ -1,6 +1,8 @@
 import logging
 import time
 
+import cv2
+
 from alphabot.bot.bot_module import Bot
 from alphabot.bot.hardware.gpio_module import GpioWrapper
 from alphabot.follower.config_module import LineFollowerConfig
@@ -20,8 +22,20 @@ class LineFollower:
         self._keep_following = True
         self._pose_detector = PoseDetector()
         self._current_state = Init(self._bot.truck)
+        self._USE_CAMERA_COURSE_CORRECTION = config.USE_CAMERA_COURSE_CORRECTION
+        self._capture = cv2.VideoCapture(0)
+        self._capture.set(3, 640)  # Set horizontal resolution
+        self._capture.set(4, 480)  # Set vertical resolution
+        success, frame = self._capture.read()
 
     def startFollowing(self):
+
+        if self._USE_CAMERA_COURSE_CORRECTION:
+            self._bot.camera_servo.setHorizontalPosition(0)
+            self._bot.camera_servo.setVerticalPosition(-30)
+            time.sleep(2)
+            self._bot.camera_servo.stop_servos()
+
         while self._keep_following:
             all_sensors_values = self._bot.line_sensor.readSensors()
             pose = self._pose_detector.getCurrentPose(all_sensors_values)
@@ -31,6 +45,11 @@ class LineFollower:
                 event = Event(pose, all_sensors_values, self._pose_detector.get_last_on_line_state())
             else:
                 event = Event(pose, all_sensors_values)
+
+            if self._USE_CAMERA_COURSE_CORRECTION:
+                success, frame = self._capture.read()
+                event.video_frame = frame
+
             self._current_state = self._current_state.doAction(event)
             self._sendTelemetry(event.sensor_values)
             time.sleep(self._main_loop_sleep_time)
