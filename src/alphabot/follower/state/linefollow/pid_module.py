@@ -4,11 +4,14 @@ class PidController(object):
 
         # TODO move out _MIN_ERROR configuration
         self._MIN_ERROR = 10
+
+        # TODO without sleeps loop works every 2.5 msec. Before fix for
+        COEFF = 2.5
         self._max_out = max_out
         self._max_integral_out = max_out
         self._kp = kp
-        self._ki = ki
-        self._kd = kd
+        self._ki = ki * COEFF
+        self._kd = kd * COEFF
         self._target_value = target_value
         self._prevent_time = None
         self._prevent_value = None

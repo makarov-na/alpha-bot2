@@ -58,7 +58,7 @@ class LineFollowingAlgorithm:
 
     def _calculate_delta_time_ms(self, current_time_ns: int) -> int:
         if self._prevent_time_ns is None:
-            self._prevent_time_ms = current_time_ns
+            self._prevent_time_ns = current_time_ns
             return 1
         delta_time_ns = (current_time_ns - self._prevent_time_ns)
         self._prevent_time_ns = current_time_ns
