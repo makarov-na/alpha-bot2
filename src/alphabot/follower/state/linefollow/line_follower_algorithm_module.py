@@ -111,12 +111,12 @@ class LineFollowingAlgorithm:
         cv2.rectangle(resized_frame, (x, y), (x + w, y + h), (0, 0, 255), 3)
         self._stream.write(resized_frame)
 
-        left_value = int((x - (frame_width - (x + w)))/2)
+        left_value = int((x - (frame_width - (x + w))) / 2)
         right_value = - left_value
 
         if left_value < 0:
             left_value = 0
-        if right_value <0:
+        if right_value < 0:
             right_value = 0
 
         return left_value, right_value
