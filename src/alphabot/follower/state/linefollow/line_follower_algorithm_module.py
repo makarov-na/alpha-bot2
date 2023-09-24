@@ -68,6 +68,7 @@ class LineFollowingAlgorithm:
     def _calculateValuesBySensors(self, all_sensors_values):
         left_value_three_sensors = all_sensors_values[1] + all_sensors_values[2] + 100 - all_sensors_values[0]
         right_value_three_sensors = all_sensors_values[3] + all_sensors_values[2] + 100 - all_sensors_values[4]
+        # TODO сделать зануление меньшей величины
         return left_value_three_sensors, right_value_three_sensors
 
     def _calculateValuesByFrame(self, original_frame):
