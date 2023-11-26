@@ -1,13 +1,14 @@
-### Анализ производительности
+## Анализ производительности
 
 После включения визуального алгоритма бот не работает.  Скорость реакции очень низкая и 
 следования не происходит. Необходимо провести анализ и понять почему происходят такие задержки. 
 
 Причины может быть две:
+
 * Задержки при получении кадра с камеры
 * Задержки при вычислении позиции линии
 
-#### Тесты алгоритма
+### Тесты алгоритма 
 * C заглушкой вместо датчиков dt=0.435551 ms.
 * С измерением IR датчиков dt=2.590298 ms. Одно ядро 40-60%. Остальные
 * C получением видеофрейма dt=36.691684 ms. Одно ядро на 100% загружено. Расчет _calculateValuesByFrame включен
@@ -19,12 +20,44 @@
 
 Итого получаем 1000/34 = 29FPS
 
-Нужен отдельный тест по производительности чтения камеры. Можно попробовать сделать на Java. Также можно попробовать читать фреймы без OpenCV
+Нужен отдельный тест по производительности чтения камеры. 
+Можно попробовать сделать на Java. Также можно попробовать читать фреймы без OpenCV
+Нужен замер скорости чтения IR датчика
 
-https://forums.raspberrypi.com/viewtopic.php?p=1283780&hilit=hermannsw+opencv#p1283755
-https://gist.github.com/CarlosGS/b8462a8a1cb69f55d8356cbb0f3a4d63
-https://proglib.io/p/opencv-sravnivaem-skorost-koda-c-i-python-na-raspberry-pi-stereozrenie-2020-02-06
-https://raspberrypi.stackexchange.com/questions/58871/pi-camera-v2-fast-full-sensor-capture-mode-with-downsampling
+
+### Синтетические тесты
+
+### Ресурсы
+
+#### Ресурсы по быстрому захвату кадров:
+* https://forums.raspberrypi.com/vewtopic.php?p=1283780&hilit=hermannsw+opencv#p1283755
+* https://gist.github.com/CarlosGS/b8462a8a1cb69f55d8356cbb0f3a4d63
+* https://proglib.io/p/opencv-sravnivaem-skorost-koda-c-i-python-na-raspberry-pi-stereozrenie-2020-02-06
+* https://raspberrypi.stackexchange.com/questions/58871/pi-camera-v2-fast-full-sensor-capture-mode-with-downsampling
 
 На самом деле, в Python можно использовать способ захвата, аналогичный применяемому в коде на C++ – передача видео через pipe шустрой утилитой raspividyuv. 
 Второй подход – решение, предложенное автором PiCamera в одном из ответов на Raspberry.stackexchange.
+
+#### Ресурсы по работе ML на устройствах и обработке видео:
+* https://medium.com/@david.dudas/camera-based-line-following-with-the-revolution-robotics-challenge-kit-using-a-neural-network-eab3bdb4e80c
+* https://qengineering.eu/deep-learning-with-raspberry-pi-and-alternatives.html
+* https://github.com/opencv/opencv_zoo/blob/main/benchmark/README.md
+
+Надо проверить как работает текущий алгоритм с задержкой 30 ms
+    self.SLEEP_TIME = millisecond * 2 OK
+    self.SLEEP_TIME = millisecond * 10 - не стабильно
+    self.SLEEP_TIME = millisecond * 40 - слетает
+    
+    c нулевой задержкой получаем dt 5 ms - работает хорошо, но одно ядро загружено на 88%
+    с задержкой в 5ms dt 9 ms одно ядро загружено на 35%, но поведение не стабильное
+    то есть либо нужно укладывать в 5 ms либо делать медленнее 
+    чем формируется задержка в 5 ms
+
+Возможные варианты:
+* Ускорение
+* Поменять так, чтобы работал с задержками
+
+Замеры осциллографом
+Максимальная частота чистого переключения одного пина 432 килогерца 
+На выходе частота 123 килогерца без видео
+C видео частота 90 килогерц
