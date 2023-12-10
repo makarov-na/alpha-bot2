@@ -1,3 +1,6 @@
+import logging
+from enum import Enum
+
 import cv2
 
 from alphabot.bot.truck_module import Truck
@@ -5,7 +8,11 @@ from alphabot.follower.config_module import LineFollowerConfig
 from alphabot.follower.event.event_module import Event
 from alphabot.follower.pose.pose_detector_module import Pose
 from alphabot.follower.state.linefollow.pid_turn_power_calculator_module import PidTurnPowerCalculator
-import logging
+
+
+class State(Enum):
+    FORWARD = 1
+    STOP = 2
 
 
 class LineFollowingAlgorithm:
@@ -18,15 +25,39 @@ class LineFollowingAlgorithm:
         self._prevent_time_ns = None
         self._USE_CAMERA_COURSE_CORRECTION = config.USE_CAMERA_COURSE_CORRECTION
         self._stream = None
+        self._FORWARD_TIME_MS = 100
+        self._STOP_TIME_MS = 1000
+        self._state = State.FORWARD
+        self._state_time_ms = 0
 
     def doAction(self, event: Event):
-        if event.pose == Pose.ON_LINE_WITH_TREE_CENTRAL_SENSORS:
-            self._bot_truck.setSpeedPower(self._speed_power * 1.2)
-        elif event.pose == Pose.ON_LINE_WITH_CENTRAL_SENSOR:
-            self._bot_truck.setSpeedPower(self._speed_power)
-        elif event.pose == Pose.ON_LINE_WITHOUT_CENTRAL_SENSOR:
+        delta_time_ms = self._calculate_delta_time_ms(event.time_ns)
+        self._correctSpeed(event.pose, delta_time_ms)
+        self._correctCourse(event, delta_time_ms)
+
+    def _correctSpeed(self, pose: Pose, delta_time):
+
+        self._calculateState(delta_time)
+
+        if self._state == State.STOP:
             self._bot_truck.setSpeedPower(0)
-        self._correctCourse(event, self._calculate_delta_time_ms(event.time_ns))
+            return
+
+        if pose == Pose.ON_LINE_WITH_TREE_CENTRAL_SENSORS:
+            self._bot_truck.setSpeedPower(self._speed_power * 1.2)
+        elif pose == Pose.ON_LINE_WITH_CENTRAL_SENSOR:
+            self._bot_truck.setSpeedPower(self._speed_power)
+        elif pose == Pose.ON_LINE_WITHOUT_CENTRAL_SENSOR:
+            self._bot_truck.setSpeedPower(0)
+
+    def _calculateState(self, delta_time_ms):
+        self._state_time_ms = self._state_time_ms + delta_time_ms
+        if self._state == State.STOP and self._state_time_ms > self._STOP_TIME_MS:
+            self._state = State.FORWARD
+            self._state_time_ms = 0
+        elif self._state == State.FORWARD and self._state_time_ms > self._FORWARD_TIME_MS:
+            self._state = State.STOP
+            self._state_time_ms = 0
 
     def _correctCourse(self, event: Event, delta_time):
         left_value, right_value, left_value_cam, right_value_cam = None, None, None, None
@@ -107,6 +138,8 @@ class LineFollowingAlgorithm:
         if len(contours) <= 0:
             return None, None
         cnt = max(contours, key=cv2.contourArea)
+
+        # Вычисляем координаты прямоугольника, включающего линию
         x, y, w, h = cv2.boundingRect(cnt)
 
         cv2.rectangle(resized_frame, (x, y), (x + w, y + h), (0, 0, 255), 3)

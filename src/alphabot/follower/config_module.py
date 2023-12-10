@@ -6,8 +6,8 @@ class LineFollowerConfig:
         self.KD = 20
         self.KI = 0
         self.MAX_OUT = 60
-        self.SPEED_POWER = 25
+        self.SPEED_POWER = 15
         self.SLEEP_TIME = microsecond * 10
         self.TARGET_VALUE_LEFT = 0
         self.TARGET_VALUE_RIGHT = 0
-        self.USE_CAMERA_COURSE_CORRECTION = False
+        self.USE_CAMERA_COURSE_CORRECTION = True
