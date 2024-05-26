@@ -61,3 +61,8 @@ doc/guides/AlphaBot2-Pi-Schematic.pdf
 * Контроллер PCA9685 управляется посредством I2C шины
 * 
 
+## Ходовые моторы
+
+TB6612FNG motor driver
+Управление драйвером осуществляется с помощью программного PWM с пинов 6 и 26
+Разводка на base schematic TB1
